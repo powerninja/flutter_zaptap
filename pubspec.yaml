@@ -22,3 +22,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+
+  fonts:
+    # - family: Dela_Gothic_One
+    #   fonts:
+    #     - asset: assets/fonts/Dela_Gothic_One/DelaGothicOne-Regular.ttf
+
+    - family: M_PLUS_Rounded_1c
+      fonts:
+        - asset: assets/fonts/M_PLUS_Rounded_1c/MPLUS1p-Regular.ttf

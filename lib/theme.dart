@@ -369,6 +369,7 @@ class MaterialTheme {
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
+        fontFamily: 'M_PLUS_Rounded_1c',
       );
 
   List<ExtendedColor> get extendedColors => [];
