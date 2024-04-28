@@ -33,39 +33,40 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        centerTitle: true,
-        title: Text(widget.title,
-            style: const TextStyle(fontWeight: FontWeight.w700)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => {},
-          ),
-          IconButton(
-            icon: Icon(Icons.remove),
-            onPressed: () => {},
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+          children: [
+            Expanded(
+              child: Container(),
             ),
-            Text(
-              'test',
-              style: Theme.of(context).textTheme.headlineMedium,
+            OutlinedButton(
+              onPressed: () {
+                // 処理
+              },
+              child: const Text('メモ'),
             ),
-            ElevatedButton(
-              child: Text('+ Button'),
-              onPressed: () => print('test'),
-            )
+            SizedBox(width: 15.0), // ボタン間の間隔
+            OutlinedButton(
+              onPressed: () {
+                // 処理
+              },
+              child: const Text('メモ一覧'),
+            ),
+            Expanded(
+              child: Container(),
+            ),
           ],
         ),
       ),
+      body: ListView.builder(
+          itemCount: 15,
+          itemBuilder: (context, index) => ListTile(
+                title: Text('Item $index'),
+                subtitle: Text('Subtitle $index'),
+                leading: const Icon(Icons.star),
+                trailing: const Icon(Icons.arrow_forward),
+                onTap: () => {},
+              )),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {},
         tooltip: 'Increment',
