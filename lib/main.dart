@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isShowingMemoList = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,18 +40,35 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Container(),
             ),
-            OutlinedButton(
+            TextButton(
               onPressed: () {
-                // 処理
+                setState(() {
+                  _isShowingMemoList = true;
+                });
               },
-              child: const Text('メモ'),
+              child: Text(
+                'メモ',
+                style: TextStyle(
+                    fontWeight: _isShowingMemoList == true
+                        ? FontWeight.w800
+                        : FontWeight.w400,
+                    fontSize: 20.0),
+              ),
             ),
-            SizedBox(width: 15.0), // ボタン間の間隔
-            OutlinedButton(
+            const SizedBox(width: 15.0),
+            TextButton(
               onPressed: () {
-                // 処理
+                setState(() {
+                  _isShowingMemoList = false;
+                });
               },
-              child: const Text('メモ一覧'),
+              child: Text(
+                'メモ一覧',
+                style: TextStyle(
+                    fontWeight:
+                        _isShowingMemoList ? FontWeight.w400 : FontWeight.w800,
+                    fontSize: 20.0),
+              ),
             ),
             Expanded(
               child: Container(),
