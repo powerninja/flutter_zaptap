@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(),
             ),
             TextButton(
+              //TODO: タップした際にメモを書く画面に切り替える
               onPressed: () {
                 setState(() {
                   _isShowingMemoList = true;
@@ -76,15 +77,51 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: ListView.builder(
-          itemCount: 15,
-          itemBuilder: (context, index) => ListTile(
-                title: Text('Item $index'),
-                subtitle: Text('Subtitle $index'),
-                leading: const Icon(Icons.star),
-                trailing: const Icon(Icons.arrow_forward),
-                onTap: () => {},
-              )),
+      body: PageView(
+        onPageChanged: (index) {
+          setState(() {
+            _isShowingMemoList = index == 0;
+          });
+        },
+        children: [
+          //TODO: マークダウンでメモを書く
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: 'タイトル',
+                    hintText: 'タイトルを入力してください',
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: '内容',
+                    hintText: '内容を入力してください',
+                  ),
+                  maxLines: 10,
+                ),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () => {},
+                  child: const Text('保存'),
+                ),
+              ],
+            ),
+          ),
+          ListView.builder(
+              itemCount: 15,
+              itemBuilder: (context, index) => ListTile(
+                    title: Text('Item $index'),
+                    subtitle: Text('Subtitle $index'),
+                    leading: const Icon(Icons.star),
+                    trailing: const Icon(Icons.arrow_forward),
+                    onTap: () => {},
+                  )),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {},
         tooltip: 'Increment',
