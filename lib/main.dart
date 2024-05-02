@@ -50,10 +50,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 'メモ',
                 style: TextStyle(
-                    fontWeight: _isShowingMemoList == true
-                        ? FontWeight.w800
-                        : FontWeight.w400,
-                    fontSize: 20.0),
+                  fontSize: 20.0,
+                  fontWeight: _isShowingMemoList == true
+                      ? FontWeight.w800
+                      : FontWeight.w400,
+                  decoration: _isShowingMemoList == true
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationThickness: 3,
+                  decorationColor: Theme.of(context).primaryColor,
+                ),
               ),
             ),
             const SizedBox(width: 15.0),
@@ -66,9 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 'メモ一覧',
                 style: TextStyle(
-                    fontWeight:
-                        _isShowingMemoList ? FontWeight.w400 : FontWeight.w800,
-                    fontSize: 20.0),
+                  fontSize: 20.0,
+                  fontWeight:
+                      _isShowingMemoList ? FontWeight.w400 : FontWeight.w800,
+                  decoration: _isShowingMemoList == true
+                      ? TextDecoration.none
+                      : TextDecoration.underline,
+                  decorationThickness: 3,
+                  decorationColor: Theme.of(context).primaryColor,
+                ),
               ),
             ),
             Expanded(
