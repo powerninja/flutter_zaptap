@@ -30,6 +30,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _isShowingMemoList = true;
+  final PageController _pageViewController = PageController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 setState(() {
                   _isShowingMemoList = true;
+                  _pageViewController.animateToPage(0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn);
                 });
               },
               child: Text(
@@ -65,6 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 15.0),
             TextButton(
               onPressed: () {
+                _pageViewController.animateToPage(1,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeIn);
                 setState(() {
                   _isShowingMemoList = false;
                 });
@@ -90,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: PageView(
+        controller: _pageViewController,
         onPageChanged: (index) {
           setState(() {
             _isShowingMemoList = index == 0;
