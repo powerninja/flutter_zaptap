@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 void main() {
   runApp(const MyApp());
@@ -104,29 +105,26 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         children: [
-          //TODO: マークダウンでメモを書く
           Container(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
-                const TextField(
-                  decoration: InputDecoration(
-                    labelText: 'タイトル',
-                    hintText: 'タイトルを入力してください',
-                  ),
+                TextField(
+                  decoration: const InputDecoration(
+                      hintText: 'Untitled', border: InputBorder.none),
+                  onChanged: (value) {
+                    print(value);
+                  },
                 ),
                 const SizedBox(height: 20.0),
-                const TextField(
-                  decoration: InputDecoration(
-                    labelText: '内容',
-                    hintText: '内容を入力してください',
-                  ),
-                  maxLines: 10,
-                ),
-                const SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () => {},
-                  child: const Text('保存'),
+                TextField(
+                  decoration: const InputDecoration(
+                      hintText: 'Just start typing...',
+                      border: InputBorder.none),
+                  maxLines: 20,
+                  onChanged: (value) {
+                    print(value);
+                  },
                 ),
               ],
             ),
