@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 setState(() {
                   _isShowingMemoList = true;
                   _pageViewController.animateToPage(0,
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 200),
                       curve: Curves.easeIn);
                 });
               },
@@ -70,8 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 15.0),
             TextButton(
               onPressed: () {
+                primaryFocus?.unfocus();
                 _pageViewController.animateToPage(1,
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 200),
                     curve: Curves.easeIn);
                 setState(() {
                   _isShowingMemoList = false;
@@ -100,6 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: PageView(
         controller: _pageViewController,
         onPageChanged: (index) {
+          if (index == 1) {
+            primaryFocus?.unfocus();
+          }
           setState(() {
             _isShowingMemoList = index == 0;
           });
@@ -121,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: const InputDecoration(
                       hintText: 'Just start typing...',
                       border: InputBorder.none),
-                  maxLines: 20,
+                  maxLines: 10,
                   onChanged: (value) {
                     print(value);
                   },
@@ -143,7 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => {},
         tooltip: 'Increment',
-        child: const Icon(Icons.edit),
+        //保存iconを表示
+        child: const Icon(Icons.save),
       ),
     );
   }
