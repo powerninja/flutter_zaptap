@@ -32,6 +32,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _isShowingMemoList = true;
   final PageController _pageViewController = PageController();
+  final bodyTextController = TextEditingController();
+  final titleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               children: [
                 TextField(
+                  controller: titleController,
                   decoration: const InputDecoration(
                       hintText: 'Untitled', border: InputBorder.none),
                   onChanged: (value) {
@@ -121,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20.0),
                 TextField(
+                  controller: bodyTextController,
                   autofocus: true,
                   decoration: const InputDecoration(
                       hintText: 'Just start typing...',
