@@ -131,9 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       controller: titleController,
                       decoration: const InputDecoration(
                           hintText: 'Untitled', border: InputBorder.none),
-                      onChanged: (value) {
-                        print(value);
-                      },
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
@@ -146,9 +143,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           hintText: 'Just start typing...',
                           border: InputBorder.none),
                       maxLines: null,
-                      onChanged: (value) {
-                        print(value);
-                      },
                     ),
                   ],
                 ),
@@ -175,13 +169,18 @@ class _MyHomePageState extends State<MyHomePage> {
           FloatingActionButton.extended(
             label: const Text('Save'),
             icon: const Icon(Icons.save),
-            onPressed: () {},
+            onPressed: () {
+              // TODO: sqliteに保存する
+            },
           ),
           const SizedBox(width: 10.0),
           FloatingActionButton.extended(
             label: const Text('Clear'),
             icon: const Icon(Icons.delete),
-            onPressed: () {},
+            onPressed: () {
+              bodyTextController.clear();
+              titleController.clear();
+            },
           ),
         ],
       ),
