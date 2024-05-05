@@ -43,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(),
             ),
             TextButton(
-              //TODO: タップした際にメモを書く画面に切り替える
               onPressed: () {
                 setState(() {
                   _isShowingMemoList = true;
@@ -122,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 20.0),
                 TextField(
+                  autofocus: true,
                   decoration: const InputDecoration(
                       hintText: 'Just start typing...',
                       border: InputBorder.none),
