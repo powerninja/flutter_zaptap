@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final PageController _pageViewController = PageController();
   final bodyTextController = TextEditingController();
   final titleController = TextEditingController();
+  FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,32 +111,39 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         children: [
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                      hintText: 'Untitled', border: InputBorder.none),
-                  onChanged: (value) {
-                    print(value);
-                  },
+          ListView(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                          hintText: 'Untitled', border: InputBorder.none),
+                      onChanged: (value) {
+                        print(value);
+                      },
+                    ),
+                    const SizedBox(height: 20.0),
+                    TextField(
+                      controller: bodyTextController,
+                      autofocus: true,
+                      keyboardType: TextInputType.multiline,
+                      textAlign: TextAlign.left,
+                      focusNode: this.focusNode,
+                      decoration: const InputDecoration(
+                          hintText: 'Just start typing...',
+                          border: InputBorder.none),
+                      maxLines: null,
+                      onChanged: (value) {
+                        print(value);
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20.0),
-                TextField(
-                  controller: bodyTextController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: 'Just start typing...',
-                      border: InputBorder.none),
-                  maxLines: 10,
-                  onChanged: (value) {
-                    print(value);
-                  },
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           ListView.builder(
               itemCount: 15,
