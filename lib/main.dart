@@ -30,14 +30,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // メモ一覧を表示するかどうか
   bool _isShowingMemoList = true;
+  // ページコントローラー
   final PageController _pageViewController = PageController();
+  // テキストコントローラー
   final bodyTextController = TextEditingController();
+  // タイトルコントローラー
   final titleController = TextEditingController();
+  // フォーカスノード
   FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // フローティングアクションボタンの位置
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // アプリバー
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -100,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      // ページビュー
       body: PageView(
         controller: _pageViewController,
         onPageChanged: (index) {
@@ -110,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _isShowingMemoList = index == 0;
           });
         },
+        // メモ画面
         children: [
           ListView(
             children: [
@@ -145,6 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
+          // メモ一覧画面
+          // TODO: 改修が必要
           ListView.builder(
               itemCount: 15,
               itemBuilder: (context, index) => ListTile(
@@ -156,11 +168,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   )),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Increment',
-        //保存iconを表示
-        child: const Icon(Icons.save),
+      // 下部のボタン
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.extended(
+            label: const Text('Save'),
+            icon: const Icon(Icons.save),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 10.0),
+          FloatingActionButton.extended(
+            label: const Text('Clear'),
+            icon: const Icon(Icons.delete),
+            onPressed: () {},
+          ),
+        ],
       ),
     );
   }
