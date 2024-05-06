@@ -46,23 +46,26 @@ class _MyHomePageState extends State<MyHomePage>
   bool _showIcon = false;
   // タイマー
   Timer? _timer;
-  // アニメーションコントローラー
-  AnimationController? _animationController;
-  // アニメーションの進行状況を示す
-  Animation<double>? _animation;
+  // 保存ボタン押下時の雷iconのアニメーションコントローラー
+  AnimationController? _lightningAnimationController;
+  // 保存ボタン押下時の雷iconのアニメーションの進行状況を示す
+  Animation<double>? _lightningAnimation;
 
   // 初期化
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    // 雷アイコンのアニメーションを初期化
+    _lightningAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _animation = Tween(begin: 0.0, end: 3.0).animate(_animationController!);
-    // アニメーションの状態を監視する
-    _animationController!.addStatusListener((status) {
-      // アニメーションが終了しているか確認する
+    // 雷アイコンのアニメーションを設定
+    _lightningAnimation =
+        Tween(begin: 0.0, end: 3.0).animate(_lightningAnimationController!);
+    // 雷アイコンアニメーションの状態を監視する
+    _lightningAnimationController!.addStatusListener((status) {
+      // 雷アイコンアニメーションが終了しているか確認する
       if (status == AnimationStatus.dismissed) {
         setState(() {
           // 雷アイコンを非表示にする
@@ -155,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage>
               // 背景の透過する
               child: FadeTransition(
                 // アニメーションを適用
-                opacity: _animation!,
+                opacity: _lightningAnimation!,
                 // 背景のサイズや色、形を指定
                 child: Container(
                   width: 150,
@@ -192,17 +195,21 @@ class _MyHomePageState extends State<MyHomePage>
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
+                        // タイトル
                         TextField(
                           controller: titleController,
                           decoration: const InputDecoration(
                               hintText: 'Untitled', border: InputBorder.none),
                         ),
+                        // 余白
                         const SizedBox(height: 20.0),
+                        // 本文
                         TextField(
                           controller: bodyTextController,
                           autofocus: true,
                           keyboardType: TextInputType.multiline,
                           textAlign: TextAlign.left,
+                          // 画面アクセス時にキーボードを表示する
                           focusNode: this.focusNode,
                           decoration: const InputDecoration(
                               hintText: 'Just start typing...',
@@ -245,13 +252,13 @@ class _MyHomePageState extends State<MyHomePage>
                   _showIcon = !_showIcon;
                 });
                 // アニメーションを再生
-                _animationController?.forward();
+                _lightningAnimationController?.forward();
                 // 3秒後にiconを消す
                 _timer?.cancel(); // 既存のTimerをキャンセル
                 // 1秒後にアイコンを非表示にする
                 _timer = Timer(const Duration(seconds: 1), () {
                   // アニメーションを逆再生
-                  _animationController?.reverse();
+                  _lightningAnimationController?.reverse();
                 });
                 // TODO: sqliteに保存する
               },
