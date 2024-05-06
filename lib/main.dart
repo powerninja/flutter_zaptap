@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+// import 'package:flutter_markdown/flutter_markdown.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +30,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   // メモ一覧を表示するかどうか
   bool _isShowingMemoList = true;
   // ページコントローラー
@@ -40,6 +42,43 @@ class _MyHomePageState extends State<MyHomePage> {
   final titleController = TextEditingController();
   // フォーカスノード
   FocusNode focusNode = FocusNode();
+  // 雷アイコンを表示するかどうか
+  bool _showIcon = false;
+  // タイマー
+  Timer? _timer;
+  // アニメーションコントローラー
+  AnimationController? _animationController;
+  // アニメーションの進行状況を示す
+  Animation<double>? _animation;
+
+  // 初期化
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = Tween(begin: 0.0, end: 3.0).animate(_animationController!);
+    // アニメーションの状態を監視する
+    _animationController!.addStatusListener((status) {
+      // アニメーションが終了しているか確認する
+      if (status == AnimationStatus.dismissed) {
+        setState(() {
+          // 雷アイコンを非表示にする
+          _showIcon = false;
+        });
+      }
+    });
+  }
+
+  // timerを破棄する
+  @override
+  void dispose() {
+    _timer?.cancel(); // Timerを破棄する
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,79 +148,126 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       // ページビュー
-      body: PageView(
-        controller: _pageViewController,
-        onPageChanged: (index) {
-          if (index == 1) {
-            primaryFocus?.unfocus();
-          }
-          setState(() {
-            _isShowingMemoList = index == 0;
-          });
-        },
-        // メモ画面
+      body: Stack(
         children: [
-          ListView(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                          hintText: 'Untitled', border: InputBorder.none),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: bodyTextController,
-                      autofocus: true,
-                      keyboardType: TextInputType.multiline,
-                      textAlign: TextAlign.left,
-                      focusNode: this.focusNode,
-                      decoration: const InputDecoration(
-                          hintText: 'Just start typing...',
-                          border: InputBorder.none),
-                      maxLines: null,
-                    ),
-                  ],
+          if (_showIcon)
+            Center(
+              // 背景の透過する
+              child: FadeTransition(
+                // アニメーションを適用
+                opacity: _animation!,
+                // 背景のサイズや色、形を指定
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    shape: BoxShape.circle,
+                  ),
+                  // 雷アイコン
+                  child: const Icon(
+                    Icons.flash_on,
+                    size: 100,
+                    color: Colors.yellow,
+                  ),
                 ),
               ),
+            ),
+          // スワイプで画面遷移
+          PageView(
+            controller: _pageViewController,
+            onPageChanged: (index) {
+              if (index == 1) {
+                primaryFocus?.unfocus();
+              }
+              setState(() {
+                _isShowingMemoList = index == 0;
+              });
+            },
+            // メモ画面
+            children: [
+              ListView(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(
+                              hintText: 'Untitled', border: InputBorder.none),
+                        ),
+                        const SizedBox(height: 20.0),
+                        TextField(
+                          controller: bodyTextController,
+                          autofocus: true,
+                          keyboardType: TextInputType.multiline,
+                          textAlign: TextAlign.left,
+                          focusNode: this.focusNode,
+                          decoration: const InputDecoration(
+                              hintText: 'Just start typing...',
+                              border: InputBorder.none),
+                          maxLines: null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              // メモ一覧画面
+              // TODO: 改修が必要
+              ListView.builder(
+                  itemCount: 15,
+                  itemBuilder: (context, index) => ListTile(
+                        title: Text('Item $index'),
+                        subtitle: Text('Subtitle $index'),
+                        leading: const Icon(Icons.star),
+                        trailing: const Icon(Icons.arrow_forward),
+                        onTap: () => {},
+                      )),
             ],
           ),
-          // メモ一覧画面
-          // TODO: 改修が必要
-          ListView.builder(
-              itemCount: 15,
-              itemBuilder: (context, index) => ListTile(
-                    title: Text('Item $index'),
-                    subtitle: Text('Subtitle $index'),
-                    leading: const Icon(Icons.star),
-                    trailing: const Icon(Icons.arrow_forward),
-                    onTap: () => {},
-                  )),
         ],
       ),
-      // 下部のボタン
+      // フローティングアクションボタン
       floatingActionButton: Row(
+        // 中心に配置
         mainAxisSize: MainAxisSize.min,
         children: [
-          FloatingActionButton.extended(
-            label: const Text('Save'),
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              // TODO: sqliteに保存する
-            },
-          ),
+          // 保存ボタン
+          if (_isShowingMemoList == true)
+            FloatingActionButton.extended(
+              label: const Text('Save'),
+              icon: const Icon(Icons.save),
+              onPressed: () {
+                // 雷アイコンを表示する
+                setState(() {
+                  _showIcon = !_showIcon;
+                });
+                // アニメーションを再生
+                _animationController?.forward();
+                // 3秒後にiconを消す
+                _timer?.cancel(); // 既存のTimerをキャンセル
+                // 1秒後にアイコンを非表示にする
+                _timer = Timer(const Duration(seconds: 1), () {
+                  // アニメーションを逆再生
+                  _animationController?.reverse();
+                });
+                // TODO: sqliteに保存する
+              },
+            ),
+          // ボタン間のスペース
           const SizedBox(width: 10.0),
-          FloatingActionButton.extended(
-            label: const Text('Clear'),
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              bodyTextController.clear();
-              titleController.clear();
-            },
-          ),
+          // クリアボタン
+          if (_isShowingMemoList == true)
+            FloatingActionButton.extended(
+              label: const Text('Clear'),
+              icon: const Icon(Icons.delete),
+              onPressed: () {
+                bodyTextController.clear();
+                titleController.clear();
+              },
+            ),
         ],
       ),
     );
