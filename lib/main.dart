@@ -3,6 +3,7 @@ import 'theme.dart';
 // import 'package:flutter_markdown/flutter_markdown.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +12,20 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-//TODO: 日本語ローカライズ
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ZapTap',
       theme: const MaterialTheme(TextTheme()).light(),
       darkTheme: const MaterialTheme(TextTheme()).dark(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ja', 'JP'),
+      ],
       home: const MyHomePage(title: 'ZapTap'),
     );
   }
