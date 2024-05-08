@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 // import 'package:flutter_markdown/flutter_markdown.dart';
 import 'dart:async';
+import 'package:sqflite/sqflite.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+//TODO: 日本語ローカライズ
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
