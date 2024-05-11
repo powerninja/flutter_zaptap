@@ -18,7 +18,7 @@ class Note {
   final String title;
   final String content;
   final String date;
-  final bool favorite;
+  final int favorite;
   final String color;
   final String? imagePath; // 画像のファイルパスを保持する
 
@@ -46,12 +46,12 @@ class Note {
   }
 
   // テーブルを作成する
-  Future<Database> initDB() async {
+  static Future<Database> initDB() async {
     final database = openDatabase(
       join(await getDatabasesPath(), 'notes.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE notes(id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite boolean, color TEXT, image_path TEXT)',
+          'CREATE TABLE notes(id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite INTEGER, color TEXT, image_path TEXT)',
         );
       },
       version: 1,
@@ -64,7 +64,7 @@ class Note {
     await db.insert('notes', note.toMap());
   }
 
-  Future<List<Note>> getNotes() async {
+  static Future<List<Note>> getNotes() async {
     final db = await initDB();
     final List<Map<String, dynamic>> maps = await db.query('notes');
     return maps.map((map) => Note.fromMap(map)).toList();
