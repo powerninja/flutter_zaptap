@@ -4,6 +4,7 @@ import 'theme.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dbHelper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('ja', 'JP'),
       ],
+      // TODO: MyHomePageを変更する
       home: const MyHomePage(title: 'ZapTap'),
     );
   }
@@ -90,6 +92,31 @@ class _MyHomePageState extends State<MyHomePage>
   void dispose() {
     _timer?.cancel(); // Timerを破棄する
     super.dispose();
+  }
+
+  // メモを保存する
+  Future<void> _saveNote() async {
+    final note = Note(
+        id: 11234123334,
+        favorite: 1,
+        color: 'white',
+        title: bodyTextController.text,
+        content: titleController.text,
+        date: DateTime.now().toString(),
+        imagePath: 'test');
+
+    await note.insertNote(note);
+    _getNote();
+  }
+
+  // メモを取得する
+  Future<void> _getNote() async {
+    List<Note> memoList = [];
+    memoList = await Note.getNotes();
+    for (var memo in memoList) {
+      print(memo.title);
+    }
+    // print(memoList[0].title);
   }
 
   @override
@@ -257,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage>
               label: const Text('Save'),
               icon: const Icon(Icons.save),
               onPressed: () {
+                _saveNote();
                 // 雷アイコンを表示する
                 setState(() {
                   _showIcon = !_showIcon;
