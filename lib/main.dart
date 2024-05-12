@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage>
     String noteId = uuid.v4();
     final note = Note(
         id: noteId,
-        favorite: 1,
+        favorite: 0,
         color: 'white',
         title: bodyTextController.text,
         content: titleController.text,
@@ -273,8 +273,13 @@ class _MyHomePageState extends State<MyHomePage>
                   itemCount: memoList.length,
                   itemBuilder: (context, index) => ListTile(
                         title: Text(memoList[index].title),
-                        subtitle: Text(memoList[index].date),
-                        leading: const Icon(Icons.star),
+                        subtitle: Text(memoList[index]
+                            .date
+                            .substring(0, 19)
+                            .replaceAll('T', ' ')),
+                        leading: memoList[index].favorite == 1
+                            ? const Icon(Icons.push_pin)
+                            : const Icon(Icons.push_pin_outlined),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () => {},
                       )),
