@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 // import 'package:flutter_markdown/flutter_markdown.dart';
 import 'dart:async';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dbHelper.dart';
 import 'package:uuid/uuid.dart';
