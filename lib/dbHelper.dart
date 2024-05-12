@@ -59,14 +59,19 @@ class Note {
     return database;
   }
 
+  // レコードを作成
   Future<void> insertNote(Note note) async {
     final db = await initDB();
     await db.insert('notes', note.toMap());
   }
 
+  // レコードを取得
   static Future<List<Note>> getNotes() async {
     final db = await initDB();
-    final List<Map<String, dynamic>> maps = await db.query('notes');
+    final List<Map<String, dynamic>> maps = await db.query(
+      'notes',
+      orderBy: 'date DESC',
+    );
     return maps.map((map) => Note.fromMap(map)).toList();
   }
 
