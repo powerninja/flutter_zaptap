@@ -281,7 +281,9 @@ class _MyHomePageState extends State<MyHomePage>
                             ? const Icon(Icons.push_pin)
                             : const Icon(Icons.push_pin_outlined),
                         trailing: const Icon(Icons.arrow_forward),
-                        onTap: () => {},
+                        onTap: () => {
+                          // TODO: 編集画面に遷移
+                        },
                       )),
             ],
           ),
