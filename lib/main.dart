@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage>
         color: 'white',
         title: bodyTextController.text,
         content: titleController.text,
-        date: DateTime.now().toString(),
+        date: DateTime.now().toIso8601String(),
         imagePath: 'test');
 
     await note.insertNote(note);
@@ -120,6 +120,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   // メモを取得する
   Future<void> _getNote() async {
+    //TODO: 最後削除する、データベースの初期化用
+    // Note.updateTableSchema();
     memoList = await Note.getNotes();
     for (var memo in memoList) {
       print(memo.title);
@@ -309,6 +311,9 @@ class _MyHomePageState extends State<MyHomePage>
                   // アニメーションを逆再生
                   _lightningAnimationController?.reverse();
                 });
+                // 入力後のテキストをクリア
+                bodyTextController.clear();
+                titleController.clear();
               },
             ),
           // ボタン間のスペース
