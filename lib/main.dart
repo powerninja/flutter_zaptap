@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dbHelper.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,11 +63,16 @@ class _MyHomePageState extends State<MyHomePage>
   AnimationController? _lightningAnimationController;
   // 保存ボタン押下時の雷iconのアニメーションの進行状況を示す
   Animation<double>? _lightningAnimation;
+  // メモ一覧
+  List<Note> memoList = [];
 
   // 初期化
   @override
   void initState() {
     super.initState();
+    // メモを取得する
+    _getNote();
+
     // 雷アイコンのアニメーションを初期化
     _lightningAnimationController = AnimationController(
       vsync: this,
@@ -96,8 +102,11 @@ class _MyHomePageState extends State<MyHomePage>
 
   // メモを保存する
   Future<void> _saveNote() async {
+    // UUIDの生成
+    final uuid = Uuid();
+    String noteId = uuid.v4();
     final note = Note(
-        id: 11234123334,
+        id: noteId,
         favorite: 1,
         color: 'white',
         title: bodyTextController.text,
@@ -111,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   // メモを取得する
   Future<void> _getNote() async {
-    List<Note> memoList = [];
     memoList = await Note.getNotes();
     for (var memo in memoList) {
       print(memo.title);
@@ -261,10 +269,10 @@ class _MyHomePageState extends State<MyHomePage>
               // メモ一覧画面
               // TODO: 改修が必要
               ListView.builder(
-                  itemCount: 15,
+                  itemCount: memoList.length,
                   itemBuilder: (context, index) => ListTile(
-                        title: Text('Item $index'),
-                        subtitle: Text('Subtitle $index'),
+                        title: Text(memoList[index].title),
+                        subtitle: Text(memoList[index].date),
                         leading: const Icon(Icons.star),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () => {},
@@ -284,7 +292,10 @@ class _MyHomePageState extends State<MyHomePage>
               label: const Text('Save'),
               icon: const Icon(Icons.save),
               onPressed: () {
+                // メモを保存する
                 _saveNote();
+                // メモを取得する
+                _getNote();
                 // 雷アイコンを表示する
                 setState(() {
                   _showIcon = !_showIcon;
@@ -298,7 +309,6 @@ class _MyHomePageState extends State<MyHomePage>
                   // アニメーションを逆再生
                   _lightningAnimationController?.reverse();
                 });
-                // TODO: sqliteに保存する
               },
             ),
           // ボタン間のスペース
