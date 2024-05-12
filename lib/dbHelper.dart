@@ -14,7 +14,7 @@ class Note {
     this.imagePath,
   });
 
-  final int id;
+  final String id;
   final String title;
   final String content;
   final String date;
@@ -51,10 +51,10 @@ class Note {
       join(await getDatabasesPath(), 'notes.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE notes(id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite INTEGER, color TEXT, image_path TEXT)',
+          'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite INTEGER, color TEXT, image_path TEXT)',
         );
       },
-      version: 1,
+      version: 3,
     );
     return database;
   }
@@ -65,6 +65,10 @@ class Note {
   }
 
   static Future<List<Note>> getNotes() async {
+    //TODO: レコード削除用
+    // final db = await Note.initDB();
+    // await db.delete('notes');
+    // return [];
     final db = await initDB();
     final List<Map<String, dynamic>> maps = await db.query('notes');
     return maps.map((map) => Note.fromMap(map)).toList();
