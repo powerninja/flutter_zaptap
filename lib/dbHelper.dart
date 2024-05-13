@@ -65,7 +65,7 @@ class Note {
     await db.insert('notes', note.toMap());
   }
 
-  // レコードを取得
+  // 全てのレコードを取得
   static Future<List<Note>> getNotes() async {
     final db = await initDB();
     final List<Map<String, dynamic>> maps = await db.query(
@@ -73,6 +73,17 @@ class Note {
       orderBy: 'date DESC',
     );
     return maps.map((map) => Note.fromMap(map)).toList();
+  }
+
+  // レコードを更新
+  Future<void> updateNote(Note note) async {
+    final db = await initDB();
+    await db.update(
+      'notes',
+      note.toMap(),
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
   }
 
   // テーブルのスキーマを更新する時に使用
