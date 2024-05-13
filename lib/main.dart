@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dbHelper.dart';
 import 'package:uuid/uuid.dart';
+import 'noteDetail.dart';
 
 void main() {
   runApp(const MyApp());
@@ -282,7 +283,15 @@ class _MyHomePageState extends State<MyHomePage>
                             : const Icon(Icons.push_pin_outlined),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () => {
-                          // TODO: 編集画面に遷移
+                          // メモ詳細画面に遷移
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NoteDetail(
+                                note: memoList[index],
+                              ),
+                            ),
+                          ),
                         },
                       )),
             ],
