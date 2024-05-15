@@ -123,10 +123,7 @@ class _MyHomePageState extends State<MyHomePage>
     //TODO: 最後削除する、データベースの初期化用
     // Note.updateTableSchema();
     memoList = await Note.getNotes();
-    for (var memo in memoList) {
-      print(memo.title);
-    }
-    // print(memoList[0].title);
+    setState(() {});
   }
 
   @override
@@ -282,16 +279,18 @@ class _MyHomePageState extends State<MyHomePage>
                             ? const Icon(Icons.push_pin)
                             : const Icon(Icons.push_pin_outlined),
                         trailing: const Icon(Icons.arrow_forward),
-                        onTap: () => {
+                        onTap: () async {
                           // メモ詳細画面に遷移
-                          Navigator.push(
+                          final updatedMemo = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => NoteDetail(
                                 note: memoList[index],
                               ),
                             ),
-                          ),
+                          );
+                          // 更新した時のみ、メモを取得する
+                          if (updatedMemo != null) _getNote();
                         },
                       )),
             ],
@@ -348,3 +347,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 }
+
+// TODO: ファイル整理
+// TODO: メモ一覧画面のデザインを変更
+// TODO: メモ画面でキーボードの上に、ボタンを配置(お気に入りボタンなどを配置する)

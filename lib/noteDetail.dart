@@ -53,25 +53,7 @@ class _NoteDetailState extends State<NoteDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('メモ'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () async {
-              final note = Note(
-                id: widget.note!.id,
-                title: _titleController.text,
-                content: _contentController.text,
-                date: _date,
-                favorite: _favorite,
-                color: _color,
-                imagePath: _imagePath,
-              );
-              await note.updateNote(note);
-              // Navigator.pop(context);
-            },
-          ),
-        ],
+        title: const Text('メモ'),
       ),
       body: Column(
         children: <Widget>[
@@ -132,7 +114,7 @@ class _NoteDetailState extends State<NoteDetail> {
               );
               await note.updateNote(note);
 
-              Navigator.pop(context);
+              Navigator.pop(context, note);
             },
           ),
         ],
