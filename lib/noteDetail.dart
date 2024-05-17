@@ -114,7 +114,7 @@ class _NoteDetailState extends State<NoteDetail> {
               );
               await note.updateNote(note);
 
-              Navigator.pop(context, note);
+              Navigator.pop(context, true);
             },
           ),
         ],

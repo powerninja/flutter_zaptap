@@ -289,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage>
                             ),
                           );
                           // 更新した時のみ、メモを取得する
-                          if (updatedMemo != null) _getNote();
+                          if (updatedMemo == true) _getNote();
                         },
                       )),
             ],
@@ -346,7 +346,6 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 }
-
 // TODO: ファイル整理
 // TODO: メモ一覧画面のデザインを変更
 // TODO: メモ画面でキーボードの上に、ボタンを配置(お気に入りボタンなどを配置する)
