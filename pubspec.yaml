@@ -16,6 +16,7 @@ dependencies:
   flutter_markdown: ^0.7.1
   sqflite: ^2.3.0
   uuid: ^4.4.0
+  keyboard_actions: ^4.2.0
   flutter_localizations:
     sdk: flutter
 
