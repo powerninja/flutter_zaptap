@@ -152,10 +152,9 @@ class _MyHomePageState extends State<MyHomePage>
                 'メモ',
                 style: TextStyle(
                   fontSize: 20.0,
-                  fontWeight: _isShowingMemoList == true
-                      ? FontWeight.w800
-                      : FontWeight.w400,
-                  decoration: _isShowingMemoList == true
+                  fontWeight:
+                      _isShowingMemoList ? FontWeight.w800 : FontWeight.w400,
+                  decoration: _isShowingMemoList
                       ? TextDecoration.underline
                       : TextDecoration.none,
                   decorationThickness: 3,
@@ -180,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage>
                   fontSize: 20.0,
                   fontWeight:
                       _isShowingMemoList ? FontWeight.w400 : FontWeight.w800,
-                  decoration: _isShowingMemoList == true
+                  decoration: _isShowingMemoList
                       ? TextDecoration.none
                       : TextDecoration.underline,
                   decorationThickness: 3,
@@ -254,7 +253,7 @@ class _MyHomePageState extends State<MyHomePage>
                           keyboardType: TextInputType.multiline,
                           textAlign: TextAlign.left,
                           // 画面アクセス時にキーボードを表示する
-                          focusNode: this.focusNode,
+                          focusNode: focusNode,
                           decoration: const InputDecoration(
                               hintText: 'Just start typing...',
                               border: InputBorder.none),
@@ -303,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage>
         mainAxisSize: MainAxisSize.min,
         children: [
           // 保存ボタン
-          if (_isShowingMemoList == true)
+          if (_isShowingMemoList)
             FloatingActionButton.extended(
               label: const Text('Save'),
               icon: const Icon(Icons.save),
@@ -333,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage>
           // ボタン間のスペース
           const SizedBox(width: 10.0),
           // クリアボタン
-          if (_isShowingMemoList == true)
+          if (_isShowingMemoList)
             FloatingActionButton.extended(
               label: const Text('Clear'),
               icon: const Icon(Icons.delete),
