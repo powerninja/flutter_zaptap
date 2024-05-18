@@ -361,8 +361,7 @@ class _MyHomePageState extends State<MyHomePage>
               label: const Text('Save'),
               icon: const Icon(Icons.save),
               // 本文に何か入力されている場合のみ、ボタンを有効にする
-              backgroundColor:
-                  !isButtonEnabled ? Theme.of(context).primaryColorLight : null,
+              backgroundColor: !isButtonEnabled ? Colors.grey : null,
               onPressed: isButtonEnabled
                   ? () {
                       // メモを保存する
