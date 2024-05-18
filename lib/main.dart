@@ -268,45 +268,73 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               // メモ一覧画面
               // TODO: 改修が必要
-              ListView.builder(
-                  itemCount: memoList.length,
-                  itemBuilder: (context, index) => ListTile(
-                        title: Text(memoList[index].title),
-                        subtitle: Text(memoList[index]
-                            .date
-                            .substring(0, 19)
-                            .replaceAll('T', ' ')),
-                        leading: IconButton(
-                          icon: memoList[index].favorite == 1
-                              ? const Icon(Icons.favorite)
-                              : const Icon(Icons.favorite_border),
-                          onPressed: () {
-                            // メモのお気に入り状態を更新する処理
-                            setState(() {
-                              memoList[index].favorite =
-                                  memoList[index].favorite == 1 ? 0 : 1;
-                            });
-                            // データベースのお気に入り状態を更新する処理
-                            memoList[index].updateNote(memoList[index]);
-                            // メモを取得する
-                            _getNote();
-                          },
-                        ),
-                        trailing: const Icon(Icons.arrow_forward),
-                        onTap: () async {
-                          // メモ詳細画面に遷移
-                          final updatedMemo = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NoteDetail(
-                                note: memoList[index],
-                              ),
+              memoList.isEmpty
+                  ? const Center(child: Text('メモがありません'))
+                  : ListView.builder(
+                      itemCount: memoList.length,
+                      itemBuilder: (context, index) => Dismissible(
+                            key: Key(memoList[index].id),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) async {
+                              // 削除するメモを一時的に保存
+                              final deletedMemo = memoList[index];
+
+                              // メモを削除する処理
+                              setState(() {
+                                memoList.removeAt(index);
+                              });
+
+                              // データベースからメモを削除する処理
+                              await deletedMemo.deleteNote(deletedMemo.id);
+                            },
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20.0),
+                              color: Colors.red,
+                              child:
+                                  const Icon(Icons.delete, color: Colors.white),
                             ),
-                          );
-                          // 更新した時のみ、メモを取得する
-                          if (updatedMemo == true) _getNote();
-                        },
-                      )),
+                            child: ListTile(
+                              title: Text(memoList[index].title),
+                              subtitle: Text(memoList[index]
+                                  .date
+                                  .substring(0, 19)
+                                  .replaceAll('T', ' ')),
+                              leading: IconButton(
+                                icon: memoList[index].favorite == 1
+                                    ? const Icon(Icons.favorite)
+                                    : const Icon(Icons.favorite_border),
+                                onPressed: () async {
+                                  // メモのお気に入り状態を更新する処理
+                                  setState(() {
+                                    memoList[index].favorite =
+                                        memoList[index].favorite == 1 ? 0 : 1;
+                                  });
+
+                                  // データベースのお気に入り状態を更新する処理
+                                  await memoList[index]
+                                      .updateNote(memoList[index]);
+
+                                  // メモを取得する
+                                  await _getNote();
+                                },
+                              ),
+                              trailing: const Icon(Icons.arrow_forward),
+                              onTap: () async {
+                                // メモ詳細画面に遷移
+                                final updatedMemo = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NoteDetail(
+                                      note: memoList[index],
+                                    ),
+                                  ),
+                                );
+                                // 更新した時のみ、メモを取得する
+                                if (updatedMemo == true) _getNote();
+                              },
+                            ),
+                          )),
             ],
           ),
         ],
