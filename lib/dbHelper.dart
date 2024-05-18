@@ -87,6 +87,16 @@ class Note {
     );
   }
 
+  // レコードを削除
+  Future<void> deleteNote(String id) async {
+    final db = await initDB();
+    await db.delete(
+      'notes',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   // テーブルのスキーマを更新する時に使用
   static Future<void> updateTableSchema() async {
     final db = await initDB();
