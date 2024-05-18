@@ -67,6 +67,8 @@ class _MyHomePageState extends State<MyHomePage>
   List<Note> memoList = [];
   // お気に入り
   int isFavorite = 0;
+  // 保存ボタンの有効/無効を管理する変数
+  bool isButtonEnabled = false;
 
   // 初期化
   @override
@@ -258,6 +260,18 @@ class _MyHomePageState extends State<MyHomePage>
                               hintText: 'Just start typing...',
                               border: InputBorder.none),
                           maxLines: null,
+                          onChanged: (value) {
+                            // メモが空でない場合、保存ボタンを有効にする
+                            if (value.isNotEmpty) {
+                              setState(() {
+                                isButtonEnabled = true;
+                              });
+                            } else {
+                              setState(() {
+                                isButtonEnabled = false;
+                              });
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -347,32 +361,39 @@ class _MyHomePageState extends State<MyHomePage>
             FloatingActionButton.extended(
               label: const Text('Save'),
               icon: const Icon(Icons.save),
-              onPressed: () {
-                // メモを保存する
-                _saveNote();
-                // メモを取得する
-                _getNote();
-                // 雷アイコンを表示する
-                setState(() {
-                  _showIcon = !_showIcon;
-                });
-                // アニメーションを再生
-                _lightningAnimationController?.forward();
-                // 3秒後にiconを消す
-                _timer?.cancel(); // 既存のTimerをキャンセル
-                // 1秒後にアイコンを非表示にする
-                _timer = Timer(const Duration(seconds: 1), () {
-                  // アニメーションを逆再生
-                  _lightningAnimationController?.reverse();
-                });
-                // 入力後のテキストをクリア
-                bodyTextController.clear();
-                titleController.clear();
-                // お気に入り状態を初期化
-                setState(() {
-                  isFavorite = 0;
-                });
-              },
+              // 本文に何か入力されている場合のみ、ボタンを有効にする
+              backgroundColor: !isButtonEnabled
+                  ? Theme.of(context).secondaryHeaderColor
+                  : null,
+              onPressed: isButtonEnabled
+                  ? () {
+                      // メモを保存する
+                      _saveNote();
+                      // メモを取得する
+                      _getNote();
+                      // 雷アイコンを表示する
+                      setState(() {
+                        _showIcon = !_showIcon;
+                      });
+                      // アニメーションを再生
+                      _lightningAnimationController?.forward();
+                      // 3秒後にiconを消す
+                      _timer?.cancel(); // 既存のTimerをキャンセル
+                      // 1秒後にアイコンを非表示にする
+                      _timer = Timer(const Duration(seconds: 1), () {
+                        // アニメーションを逆再生
+                        _lightningAnimationController?.reverse();
+                      });
+                      // 入力後のテキストをクリア
+                      bodyTextController.clear();
+                      titleController.clear();
+                      // お気に入り状態を初期化
+                      setState(() {
+                        isFavorite = 0;
+                        isButtonEnabled = false;
+                      });
+                    }
+                  : null,
             ),
 
           // ボタン間のスペース
@@ -398,6 +419,10 @@ class _MyHomePageState extends State<MyHomePage>
               onPressed: () {
                 bodyTextController.clear();
                 titleController.clear();
+                setState(() {
+                  isFavorite = 0;
+                  isButtonEnabled = false;
+                });
               },
             ),
         ],
