@@ -65,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage>
   Animation<double>? _lightningAnimation;
   // メモ一覧
   List<Note> memoList = [];
+  // お気に入り
+  int isFavorite = 0;
 
   // 初期化
   @override
@@ -104,10 +106,10 @@ class _MyHomePageState extends State<MyHomePage>
   Future<void> _saveNote() async {
     // UUIDの生成
     final uuid = Uuid();
-    String noteId = uuid.v4();
+    String noteId = uuid.v7();
     final note = Note(
         id: noteId,
-        favorite: 0,
+        favorite: isFavorite,
         color: 'white',
         title: bodyTextController.text,
         content: titleController.text,
@@ -274,9 +276,22 @@ class _MyHomePageState extends State<MyHomePage>
                             .date
                             .substring(0, 19)
                             .replaceAll('T', ' ')),
-                        leading: memoList[index].favorite == 1
-                            ? const Icon(Icons.push_pin)
-                            : const Icon(Icons.push_pin_outlined),
+                        leading: IconButton(
+                          icon: memoList[index].favorite == 1
+                              ? const Icon(Icons.favorite)
+                              : const Icon(Icons.favorite_border),
+                          onPressed: () {
+                            // メモのお気に入り状態を更新する処理
+                            setState(() {
+                              memoList[index].favorite =
+                                  memoList[index].favorite == 1 ? 0 : 1;
+                            });
+                            // データベースのお気に入り状態を更新する処理
+                            memoList[index].updateNote(memoList[index]);
+                            // メモを取得する
+                            _getNote();
+                          },
+                        ),
                         trailing: const Icon(Icons.arrow_forward),
                         onTap: () async {
                           // メモ詳細画面に遷移
@@ -329,13 +344,27 @@ class _MyHomePageState extends State<MyHomePage>
                 titleController.clear();
               },
             ),
+
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // お気に入りボタン
+          if (_isShowingMemoList)
+            FloatingActionButton(
+              child: isFavorite == 1
+                  ? const Icon(Icons.favorite)
+                  : const Icon(Icons.favorite_border),
+              onPressed: () {
+                setState(() {
+                  isFavorite = isFavorite == 1 ? 0 : 1;
+                });
+              },
+            ),
           // ボタン間のスペース
           const SizedBox(width: 10.0),
           // クリアボタン
           if (_isShowingMemoList)
-            FloatingActionButton.extended(
-              label: const Text('Clear'),
-              icon: const Icon(Icons.delete),
+            FloatingActionButton(
+              child: const Icon(Icons.delete),
               onPressed: () {
                 bodyTextController.clear();
                 titleController.clear();
