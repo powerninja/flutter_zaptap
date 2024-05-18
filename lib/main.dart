@@ -122,8 +122,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   // メモを取得する
   Future<void> _getNote() async {
-    //TODO: 最後削除する、データベースの初期化用
-    // Note.updateTableSchema();
     memoList = await Note.getNotes();
     setState(() {});
   }
@@ -370,6 +368,10 @@ class _MyHomePageState extends State<MyHomePage>
                 // 入力後のテキストをクリア
                 bodyTextController.clear();
                 titleController.clear();
+                // お気に入り状態を初期化
+                setState(() {
+                  isFavorite = 0;
+                });
               },
             ),
 
@@ -406,3 +408,4 @@ class _MyHomePageState extends State<MyHomePage>
 // TODO: ファイル整理
 // TODO: メモ一覧画面のデザインを変更
 // TODO: メモ画面でキーボードの上に、ボタンを配置(お気に入りボタンなどを配置する)
+// TODO: 写真の保存機能を追加
