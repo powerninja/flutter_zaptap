@@ -18,7 +18,7 @@ class Note {
   final String title;
   final String content;
   final String date;
-  final int favorite;
+  int favorite;
   final String color;
   final String? imagePath; // 画像のファイルパスを保持する
 
@@ -68,9 +68,10 @@ class Note {
   // 全てのレコードを取得
   static Future<List<Note>> getNotes() async {
     final db = await initDB();
+    // データを日付の降順で取得 && お気に入りのものを上に表示
     final List<Map<String, dynamic>> maps = await db.query(
       'notes',
-      orderBy: 'date DESC',
+      orderBy: 'favorite DESC, date DESC',
     );
     return maps.map((map) => Note.fromMap(map)).toList();
   }
