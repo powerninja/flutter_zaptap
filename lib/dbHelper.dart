@@ -96,36 +96,4 @@ class Note {
       whereArgs: [id],
     );
   }
-
-  // テーブルのスキーマを更新する時に使用
-  static Future<void> updateTableSchema() async {
-    final db = await initDB();
-    await db.transaction((txn) async {
-      // 1. 新しいテーブルを作成
-      await txn.execute('''
-        CREATE TABLE new_notes (
-          id TEXT PRIMARY KEY,
-          title TEXT,
-          content TEXT,
-          date TEXT,
-          favorite INTEGER,
-          color TEXT,
-          image_path TEXT
-        )
-      ''');
-
-      // 2. データを移行
-      await txn.execute('''
-        INSERT INTO new_notes (id, title, content, date, favorite, color, image_path)
-        SELECT id, title, content, date, favorite, color, image_path
-        FROM notes
-      ''');
-
-      // 3. 元のテーブルを削除
-      await txn.execute('DROP TABLE notes');
-
-      // 4. 新しいテーブルの名前を変更
-      await txn.execute('ALTER TABLE new_notes RENAME TO notes');
-    });
-  }
 }
