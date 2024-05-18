@@ -46,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   // メモ一覧を表示するかどうか
-  bool _isShowingMemoList = true;
+  bool _isShowingMemoDetail = true;
   // ページコントローラー
   final PageController _pageViewController = PageController();
   // テキストコントローラー
@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage>
   // 保存ボタン押下時の雷iconのアニメーションの進行状況を示す
   Animation<double>? _lightningAnimation;
   // メモ一覧
-  List<Note> memoList = [];
+  List<Note> notes = [];
   // お気に入り
   int isFavorite = 0;
   // 保存ボタンの有効/無効を管理する変数
@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   // メモを取得する
   Future<void> _getNote() async {
-    memoList = await Note.getNotes();
+    notes = await Note.getNotes();
     setState(() {});
   }
 
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage>
             TextButton(
               onPressed: () {
                 setState(() {
-                  _isShowingMemoList = true;
+                  _isShowingMemoDetail = true;
                   _pageViewController.animateToPage(0,
                       duration: const Duration(milliseconds: 200),
                       curve: Curves.easeIn);
@@ -155,8 +155,8 @@ class _MyHomePageState extends State<MyHomePage>
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight:
-                      _isShowingMemoList ? FontWeight.w800 : FontWeight.w400,
-                  decoration: _isShowingMemoList
+                      _isShowingMemoDetail ? FontWeight.w800 : FontWeight.w400,
+                  decoration: _isShowingMemoDetail
                       ? TextDecoration.underline
                       : TextDecoration.none,
                   decorationThickness: 3,
@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage>
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeIn);
                 setState(() {
-                  _isShowingMemoList = false;
+                  _isShowingMemoDetail = false;
                 });
               },
               child: Text(
@@ -180,8 +180,8 @@ class _MyHomePageState extends State<MyHomePage>
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight:
-                      _isShowingMemoList ? FontWeight.w400 : FontWeight.w800,
-                  decoration: _isShowingMemoList
+                      _isShowingMemoDetail ? FontWeight.w400 : FontWeight.w800,
+                  decoration: _isShowingMemoDetail
                       ? TextDecoration.none
                       : TextDecoration.underline,
                   decorationThickness: 3,
@@ -229,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage>
                 primaryFocus?.unfocus();
               }
               setState(() {
-                _isShowingMemoList = index == 0;
+                _isShowingMemoDetail = index == 0;
               });
             },
             // メモ画面
@@ -280,20 +280,20 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               // メモ一覧画面
               // TODO: 改修が必要
-              memoList.isEmpty
+              notes.isEmpty
                   ? const Center(child: Text('メモがありません'))
                   : ListView.builder(
-                      itemCount: memoList.length,
+                      itemCount: notes.length,
                       itemBuilder: (context, index) => Dismissible(
-                            key: Key(memoList[index].id),
+                            key: Key(notes[index].id),
                             direction: DismissDirection.endToStart,
                             onDismissed: (direction) async {
                               // 削除するメモを一時的に保存
-                              final deletedMemo = memoList[index];
+                              final deletedMemo = notes[index];
 
                               // メモを削除する処理
                               setState(() {
-                                memoList.removeAt(index);
+                                notes.removeAt(index);
                               });
 
                               // データベースからメモを削除する処理
@@ -307,25 +307,24 @@ class _MyHomePageState extends State<MyHomePage>
                                   const Icon(Icons.delete, color: Colors.white),
                             ),
                             child: ListTile(
-                              title: Text(memoList[index].title),
-                              subtitle: Text(memoList[index]
+                              title: Text(notes[index].title),
+                              subtitle: Text(notes[index]
                                   .date
                                   .substring(0, 19)
                                   .replaceAll('T', ' ')),
                               leading: IconButton(
-                                icon: memoList[index].favorite == 1
+                                icon: notes[index].favorite == 1
                                     ? const Icon(Icons.favorite)
                                     : const Icon(Icons.favorite_border),
                                 onPressed: () async {
                                   // メモのお気に入り状態を更新する処理
                                   setState(() {
-                                    memoList[index].favorite =
-                                        memoList[index].favorite == 1 ? 0 : 1;
+                                    notes[index].favorite =
+                                        notes[index].favorite == 1 ? 0 : 1;
                                   });
 
                                   // データベースのお気に入り状態を更新する処理
-                                  await memoList[index]
-                                      .updateNote(memoList[index]);
+                                  await notes[index].updateNote(notes[index]);
 
                                   // メモを取得する
                                   await _getNote();
@@ -338,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage>
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NoteDetail(
-                                      note: memoList[index],
+                                      note: notes[index],
                                     ),
                                   ),
                                 );
@@ -357,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage>
         mainAxisSize: MainAxisSize.min,
         children: [
           // 保存ボタン
-          if (_isShowingMemoList)
+          if (_isShowingMemoDetail)
             FloatingActionButton.extended(
               label: const Text('Save'),
               icon: const Icon(Icons.save),
@@ -398,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage>
           // ボタン間のスペース
           const SizedBox(width: 10.0),
           // お気に入りボタン
-          if (_isShowingMemoList)
+          if (_isShowingMemoDetail)
             FloatingActionButton(
               child: isFavorite == 1
                   ? const Icon(Icons.favorite)
@@ -412,7 +411,7 @@ class _MyHomePageState extends State<MyHomePage>
           // ボタン間のスペース
           const SizedBox(width: 10.0),
           // クリアボタン
-          if (_isShowingMemoList)
+          if (_isShowingMemoDetail)
             FloatingActionButton(
               child: const Icon(Icons.delete),
               onPressed: () {
