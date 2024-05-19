@@ -3,6 +3,7 @@ import 'dart:async';
 import '../dbHelper.dart';
 import 'package:uuid/uuid.dart';
 import 'note_detail_screen.dart';
+import '../widgets/lightning_icon.dart';
 
 class MemoScreen extends StatefulWidget {
   const MemoScreen({super.key, required this.title});
@@ -169,27 +170,10 @@ class _MemoScreenState extends State<MemoScreen>
       body: Stack(
         children: [
           if (_showIcon)
-            Center(
-              // 背景の透過する
-              child: FadeTransition(
-                // アニメーションを適用
-                opacity: _lightningAnimation!,
-                // 背景のサイズや色、形を指定
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  // 雷アイコン
-                  child: const Icon(
-                    Icons.flash_on,
-                    size: 100,
-                    color: Colors.yellow,
-                  ),
-                ),
-              ),
+            // LightningIconを表示
+            LightningIcon(
+              animationController: _lightningAnimationController,
+              animation: _lightningAnimation,
             ),
           // スワイプで画面遷移
           PageView(
