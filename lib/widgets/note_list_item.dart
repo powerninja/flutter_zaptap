@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/note.dart';
 import '../screens/note_detail_screen.dart';
-import '../screens/home_screen.dart';
 
 class NoteListItem extends StatelessWidget {
   final Note note;
