@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../dbHelper.dart';
+import '../services/database_service.dart';
+import '../models/note.dart';
 
 class NoteDetail extends StatefulWidget {
   final Note? note;
@@ -108,7 +109,7 @@ class _NoteDetailState extends State<NoteDetail> {
                 color: _color,
                 imagePath: _imagePath,
               );
-              await note.updateNote(note);
+              await DatabaseService().updateNote(note.toMap());
 
               Navigator.pop(context, true);
             },
