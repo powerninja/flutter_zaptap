@@ -1,4 +1,3 @@
-// widgets/lightning_icon.dart
 import 'package:flutter/material.dart';
 
 class LightningIcon extends StatelessWidget {
