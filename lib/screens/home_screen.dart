@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../dbHelper.dart';
 import 'package:uuid/uuid.dart';
-import 'note_detail_screen.dart';
 import '../widgets/lightning_icon.dart';
+import '../widgets/note_list_item.dart';
+import '../models/note.dart';
+import '../services/database_service.dart';
 
 class MemoScreen extends StatefulWidget {
   const MemoScreen({super.key, required this.title});
@@ -78,7 +79,7 @@ class _MemoScreenState extends State<MemoScreen>
   // メモを保存する
   Future<void> _saveNote() async {
     // UUIDの生成
-    final uuid = Uuid();
+    const uuid = Uuid();
     String noteId = uuid.v7();
     final note = Note(
         id: noteId,
@@ -89,13 +90,14 @@ class _MemoScreenState extends State<MemoScreen>
         date: DateTime.now().toIso8601String(),
         imagePath: 'test');
 
-    await note.insertNote(note);
+    // databaseServiceのinsertNoteメソッドを呼び出す
+    await DatabaseService().insertNote(note.toMap());
     _getNote();
   }
 
   // メモを取得する
   Future<void> _getNote() async {
-    notes = await Note.getNotes();
+    notes = await DatabaseService().getNotes();
     setState(() {});
   }
 
@@ -233,73 +235,40 @@ class _MemoScreenState extends State<MemoScreen>
                 ],
               ),
               // メモ一覧画面
-              // TODO: 改修が必要
               notes.isEmpty
                   ? const Center(child: Text('メモがありません'))
                   : ListView.builder(
                       itemCount: notes.length,
-                      itemBuilder: (context, index) => Dismissible(
-                            key: Key(notes[index].id),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (direction) async {
-                              // 削除するメモを一時的に保存
-                              final deletedMemo = notes[index];
+                      itemBuilder: (context, index) => NoteListItem(
+                        note: notes[index],
+                        onTap: (note) async {
+                          // メモのお気に入り状態を更新する処理
+                          setState(() {
+                            notes[index].favorite =
+                                notes[index].favorite == 1 ? 0 : 1;
+                          });
 
-                              // メモを削除する処理
-                              setState(() {
-                                notes.removeAt(index);
-                              });
+                          // データベースのお気に入り状態を更新する処理
+                          await DatabaseService()
+                              .updateNote(notes[index].toMap());
 
-                              // データベースからメモを削除する処理
-                              await deletedMemo.deleteNote(deletedMemo.id);
-                            },
-                            background: Container(
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.only(right: 20.0),
-                              color: Colors.red,
-                              child:
-                                  const Icon(Icons.delete, color: Colors.white),
-                            ),
-                            child: ListTile(
-                              title: Text(notes[index].title),
-                              subtitle: Text(notes[index]
-                                  .date
-                                  .substring(0, 19)
-                                  .replaceAll('T', ' ')),
-                              leading: IconButton(
-                                icon: notes[index].favorite == 1
-                                    ? const Icon(Icons.favorite)
-                                    : const Icon(Icons.favorite_border),
-                                onPressed: () async {
-                                  // メモのお気に入り状態を更新する処理
-                                  setState(() {
-                                    notes[index].favorite =
-                                        notes[index].favorite == 1 ? 0 : 1;
-                                  });
+                          // メモを取得する
+                          _getNote();
+                        },
+                        onDismissed: (note) async {
+                          // メモを削除する処理
+                          setState(() {
+                            notes.removeAt(index);
+                          });
 
-                                  // データベースのお気に入り状態を更新する処理
-                                  await notes[index].updateNote(notes[index]);
-
-                                  // メモを取得する
-                                  await _getNote();
-                                },
-                              ),
-                              trailing: const Icon(Icons.arrow_forward),
-                              onTap: () async {
-                                // メモ詳細画面に遷移
-                                final updatedMemo = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NoteDetail(
-                                      note: notes[index],
-                                    ),
-                                  ),
-                                );
-                                // 更新した時のみ、メモを取得する
-                                if (updatedMemo == true) _getNote();
-                              },
-                            ),
-                          )),
+                          await DatabaseService().deleteNote(note.id);
+                        },
+                        onNoteUpdated: (note) {
+                          // メモを更新する処理
+                          _getNote();
+                        },
+                      ),
+                    ),
             ],
           ),
         ],
