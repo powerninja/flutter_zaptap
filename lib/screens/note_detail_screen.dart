@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/note.dart';
@@ -87,6 +89,13 @@ class _NoteDetailState extends State<NoteDetail> {
               },
             ),
           ),
+          // TODO: 画像を表示できるようにする
+          // Image.file(
+          //   _imagePath!.isEmpty ? File('') : File(_imagePath),
+          //   height: 200,
+          //   width: double.infinity,
+          //   fit: BoxFit.cover,
+          // ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
