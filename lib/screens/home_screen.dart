@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets/lightning_icon.dart';
 import '../widgets/note_list_item.dart';
 import '../models/note.dart';
@@ -41,6 +44,10 @@ class _MemoScreenState extends State<MemoScreen>
   int isFavorite = 0;
   // 保存ボタンの有効/無効を管理する変数
   bool isButtonEnabled = false;
+  // 選択された画像のパス
+  String? _selectedImagePath;
+  // 選択された画像
+  File? _selectedImage;
 
   // 初期化
   @override
@@ -82,13 +89,14 @@ class _MemoScreenState extends State<MemoScreen>
     const uuid = Uuid();
     String noteId = uuid.v7();
     final note = Note(
-        id: noteId,
-        favorite: isFavorite,
-        color: 'white',
-        title: bodyTextController.text,
-        content: titleController.text,
-        date: DateTime.now().toIso8601String(),
-        imagePath: 'test');
+      id: noteId,
+      favorite: isFavorite,
+      color: 'white',
+      title: titleController.text,
+      content: bodyTextController.text,
+      date: DateTime.now().toIso8601String(),
+      imagePath: _selectedImagePath ?? '',
+    );
 
     // databaseServiceのinsertNoteメソッドを呼び出す
     await DatabaseService().insertNote(note.toMap());
@@ -99,6 +107,17 @@ class _MemoScreenState extends State<MemoScreen>
   Future<void> _getNote() async {
     notes = await DatabaseService().getNotes();
     setState(() {});
+  }
+
+  // 画像を取得する
+  Future<void> _getImagePath() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -229,6 +248,16 @@ class _MemoScreenState extends State<MemoScreen>
                             }
                           },
                         ),
+                        // TODO: 保存ボタンを押下したら画像を非表示にする
+                        // TODO: 選択した画像を削除するボタンを追加
+                        _selectedImage == null
+                            ? const SizedBox()
+                            : Image.file(
+                                _selectedImage!,
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                       ],
                     ),
                   ),
@@ -345,6 +374,16 @@ class _MemoScreenState extends State<MemoScreen>
                 });
               },
             ),
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // カメラボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              child: const Icon(Icons.camera_alt),
+              onPressed: () async {
+                await _getImagePath();
+              },
+            ),
         ],
       ),
     );
@@ -352,5 +391,4 @@ class _MemoScreenState extends State<MemoScreen>
 }
 
 // TODO: メモ一覧画面のデザインを変更
-// TODO: メモ画面でキーボードの上に、ボタンを配置(お気に入りボタンなどを配置する)
 // TODO: 写真の保存機能を追加
