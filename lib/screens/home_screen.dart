@@ -322,8 +322,8 @@ class _MemoScreenState extends State<MemoScreen>
           if (_isShowingMemoDetail)
             FloatingActionButton(
               child: isFavorite == 1
-                  ? const Icon(Icons.favorite)
-                  : const Icon(Icons.favorite_border),
+                  ? const Icon(Icons.push_pin)
+                  : const Icon(Icons.push_pin_outlined),
               onPressed: () {
                 setState(() {
                   isFavorite = isFavorite == 1 ? 0 : 1;
@@ -350,7 +350,7 @@ class _MemoScreenState extends State<MemoScreen>
     );
   }
 }
-// TODO: ファイル整理
+
 // TODO: メモ一覧画面のデザインを変更
 // TODO: メモ画面でキーボードの上に、ボタンを配置(お気に入りボタンなどを配置する)
 // TODO: 写真の保存機能を追加

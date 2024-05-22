@@ -35,8 +35,8 @@ class NoteListItem extends StatelessWidget {
         ),
         leading: IconButton(
           icon: note.favorite == 1
-              ? const Icon(Icons.favorite)
-              : const Icon(Icons.favorite_border),
+              ? const Icon(Icons.push_pin)
+              : const Icon(Icons.push_pin_outlined),
           onPressed: () => onTap(note),
         ),
         trailing: const Icon(Icons.arrow_forward),
