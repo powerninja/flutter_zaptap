@@ -110,15 +110,17 @@ class _MemoScreenState extends State<MemoScreen>
   }
 
   // 画像を取得する
-  Future<void> _getImagePath() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-    }
-  }
+  // Future<void> _getImagePath() async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _selectedImagePath = pickedFile.path;
+  //       _selectedImage = File(pickedFile.path);
+  //       isButtonEnabled = true;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -209,59 +211,57 @@ class _MemoScreenState extends State<MemoScreen>
             },
             // メモ画面
             children: [
-              ListView(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                        // タイトル
-                        TextField(
-                          controller: titleController,
-                          decoration: const InputDecoration(
-                              hintText: 'Untitled', border: InputBorder.none),
-                        ),
-                        // 余白
-                        const SizedBox(height: 20.0),
-                        // 本文
-                        TextField(
-                          controller: bodyTextController,
-                          autofocus: true,
-                          keyboardType: TextInputType.multiline,
-                          textAlign: TextAlign.left,
-                          // 画面アクセス時にキーボードを表示する
-                          focusNode: focusNode,
-                          decoration: const InputDecoration(
-                              hintText: 'Just start typing...',
-                              border: InputBorder.none),
-                          maxLines: null,
-                          onChanged: (value) {
-                            // メモが空でない場合、保存ボタンを有効にする
-                            if (value.isNotEmpty) {
-                              setState(() {
-                                isButtonEnabled = true;
-                              });
-                            } else {
-                              setState(() {
-                                isButtonEnabled = false;
-                              });
-                            }
-                          },
-                        ),
-                        // TODO: 保存ボタンを押下したら画像を非表示にする
-                        // TODO: 選択した画像を削除するボタンを追加
-                        _selectedImage == null
-                            ? const SizedBox()
-                            : Image.file(
-                                _selectedImage!,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                      ],
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: <Widget>[
+                    // タイトル
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                          hintText: 'Untitled', border: InputBorder.none),
                     ),
-                  ),
-                ],
+                    // 余白
+                    const SizedBox(height: 20.0),
+                    // 本文
+                    Expanded(
+                      child: TextField(
+                        controller: bodyTextController,
+                        autofocus: true,
+                        keyboardType: TextInputType.multiline,
+                        textAlign: TextAlign.left,
+                        // 画面アクセス時にキーボードを表示する
+                        focusNode: focusNode,
+                        decoration: const InputDecoration(
+                            hintText: 'Just start typing...',
+                            border: InputBorder.none),
+                        maxLines: null,
+                        onChanged: (value) {
+                          // メモが空でない場合、保存ボタンを有効にする
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              isButtonEnabled = true;
+                            });
+                          } else {
+                            setState(() {
+                              isButtonEnabled = false;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    // TODO: 保存ボタンを押下したら画像を非表示にする
+                    // TODO: 選択した画像を削除するボタンを追加
+                    // _selectedImage == null
+                    //     ? const SizedBox()
+                    //     : Image.file(
+                    //         _selectedImage!,
+                    //         height: 200,
+                    //         width: double.infinity,
+                    //         fit: BoxFit.cover,
+                    //       ),
+                  ],
+                ),
               ),
               // メモ一覧画面
               notes.isEmpty
@@ -374,16 +374,16 @@ class _MemoScreenState extends State<MemoScreen>
                 });
               },
             ),
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // カメラボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              child: const Icon(Icons.camera_alt),
-              onPressed: () async {
-                await _getImagePath();
-              },
-            ),
+          // // ボタン間のスペース
+          // const SizedBox(width: 10.0),
+          // // カメラボタン
+          // if (_isShowingMemoDetail)
+          //   FloatingActionButton(
+          //     child: const Icon(Icons.camera_alt),
+          //     onPressed: () async {
+          //       await _getImagePath();
+          //     },
+          //   ),
         ],
       ),
     );
