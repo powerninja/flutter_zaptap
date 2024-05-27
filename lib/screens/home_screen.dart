@@ -110,17 +110,17 @@ class _MemoScreenState extends State<MemoScreen>
   }
 
   // 画像を取得する
-  // Future<void> _getImagePath() async {
-  //   final picker = ImagePicker();
-  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _selectedImagePath = pickedFile.path;
-  //       _selectedImage = File(pickedFile.path);
-  //       isButtonEnabled = true;
-  //     });
-  //   }
-  // }
+  Future<void> _getImagePath() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImagePath = pickedFile.path;
+        _selectedImage = File(pickedFile.path);
+        isButtonEnabled = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -252,14 +252,14 @@ class _MemoScreenState extends State<MemoScreen>
                     ),
                     // TODO: 保存ボタンを押下したら画像を非表示にする
                     // TODO: 選択した画像を削除するボタンを追加
-                    // _selectedImage == null
-                    //     ? const SizedBox()
-                    //     : Image.file(
-                    //         _selectedImage!,
-                    //         height: 200,
-                    //         width: double.infinity,
-                    //         fit: BoxFit.cover,
-                    //       ),
+                    _selectedImage == null
+                        ? const SizedBox()
+                        : Image.file(
+                            _selectedImage!,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                   ],
                 ),
               ),
@@ -340,6 +340,7 @@ class _MemoScreenState extends State<MemoScreen>
                       setState(() {
                         isFavorite = 0;
                         isButtonEnabled = false;
+                        _selectedImage = null;
                       });
                     }
                   : null,
@@ -371,19 +372,20 @@ class _MemoScreenState extends State<MemoScreen>
                 setState(() {
                   isFavorite = 0;
                   isButtonEnabled = false;
+                  _selectedImage = null;
                 });
               },
             ),
           // // ボタン間のスペース
-          // const SizedBox(width: 10.0),
-          // // カメラボタン
-          // if (_isShowingMemoDetail)
-          //   FloatingActionButton(
-          //     child: const Icon(Icons.camera_alt),
-          //     onPressed: () async {
-          //       await _getImagePath();
-          //     },
-          //   ),
+          const SizedBox(width: 10.0),
+          // カメラボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              child: const Icon(Icons.camera_alt),
+              onPressed: () async {
+                await _getImagePath();
+              },
+            ),
         ],
       ),
     );
@@ -392,3 +394,4 @@ class _MemoScreenState extends State<MemoScreen>
 
 // TODO: メモ一覧画面のデザインを変更
 // TODO: 写真の保存機能を追加
+// TODO: タイトルを入力せずに保存ボタンを押下した場合、タイトルを自動生成する

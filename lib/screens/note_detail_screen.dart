@@ -51,8 +51,16 @@ class _NoteDetailState extends State<NoteDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // xにポストできるボタンを追加
       appBar: AppBar(
         title: const Text('メモ'),
+        actions: [
+          IconButton(
+            // twiiterの投稿ボタン
+            icon: const Icon(Icons.share),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -90,12 +98,12 @@ class _NoteDetailState extends State<NoteDetail> {
             ),
           ),
           // TODO: 画像を表示できるようにする
-          // Image.file(
-          //   _imagePath!.isEmpty ? File('') : File(_imagePath),
-          //   height: 200,
-          //   width: double.infinity,
-          //   fit: BoxFit.cover,
-          // ),
+          Image.file(
+            _imagePath!.isEmpty ? File('') : File(_imagePath),
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
