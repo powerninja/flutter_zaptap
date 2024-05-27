@@ -85,8 +85,15 @@ class _MemoScreenState extends State<MemoScreen>
 
   // メモを保存する
   Future<void> _saveNote() async {
-    // タイトルが空の場合、本文の先頭16文字をタイトルに設定する
-    if (titleController.text.isEmpty) {
+    DateTime now = DateTime.now();
+    // タイトルが空かつ本文が空かつ、画像が選択されている場合
+    if (titleController.text.isEmpty &&
+        bodyTextController.text.isEmpty &&
+        _selectedImagePath!.isNotEmpty) {
+      // pic Note 2021-09-01 12:34のように表示する
+      titleController.text =
+          'pic Note ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    } else if (titleController.text.isEmpty) {
       final titleLength = bodyTextController.text.length > 16
           ? 15
           : bodyTextController.text.length;
@@ -95,13 +102,14 @@ class _MemoScreenState extends State<MemoScreen>
     // UUIDの生成
     const uuid = Uuid();
     String noteId = uuid.v7();
+    // Noteのインスタンスを生成
     final note = Note(
       id: noteId,
       favorite: isFavorite,
       color: 'white',
       title: titleController.text,
       content: bodyTextController.text,
-      date: DateTime.now().toIso8601String(),
+      date: now.toIso8601String(),
       imagePath: _selectedImagePath ?? '',
     );
 
