@@ -97,13 +97,15 @@ class _NoteDetailState extends State<NoteDetail> {
               },
             ),
           ),
-          // TODO: 画像を表示できるようにする
-          Image.file(
-            _imagePath!.isEmpty ? File('') : File(_imagePath),
-            height: 200,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          // TODO: 画像の表示場所を調整
+          _imagePath == ''
+              ? const SizedBox()
+              : Image.file(
+                  File(_imagePath),
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
