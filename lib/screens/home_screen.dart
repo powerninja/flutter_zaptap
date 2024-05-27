@@ -85,6 +85,13 @@ class _MemoScreenState extends State<MemoScreen>
 
   // メモを保存する
   Future<void> _saveNote() async {
+    // タイトルが空の場合、本文の先頭16文字をタイトルに設定する
+    if (titleController.text.isEmpty) {
+      final titleLength = bodyTextController.text.length > 16
+          ? 15
+          : bodyTextController.text.length;
+      titleController.text = bodyTextController.text.substring(0, titleLength);
+    }
     // UUIDの生成
     const uuid = Uuid();
     String noteId = uuid.v7();
