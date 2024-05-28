@@ -1,15 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/note.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NoteDetail extends StatefulWidget {
-  final Note? note;
+  final Note note;
 
   const NoteDetail({
     Key? key,
-    this.note,
+    required this.note,
   }) : super(key: key);
 
   @override
@@ -23,19 +23,20 @@ class _NoteDetailState extends State<NoteDetail> {
   late String _content;
   late String _date;
   late String _color;
-  late List<String> _imagePaths;
+  late List<File> _imagePaths;
   late int _favorite;
 
   @override
   void initState() {
     super.initState();
 
-    _title = widget.note!.title;
-    _content = widget.note!.content;
-    _date = widget.note!.date;
-    _color = widget.note!.color;
-    _imagePaths = widget.note!.imagePaths?.toList() ?? <String>[];
-    _favorite = widget.note!.favorite;
+    _title = widget.note.title;
+    _content = widget.note.content;
+    _date = widget.note.date;
+    _color = widget.note.color;
+    _imagePaths =
+        widget.note.imagePaths?.map((path) => File(path)).toList() ?? <File>[];
+    _favorite = widget.note.favorite;
 
     _titleController = TextEditingController(text: _title);
     _contentController = TextEditingController(text: _content);
@@ -48,6 +49,85 @@ class _NoteDetailState extends State<NoteDetail> {
     super.dispose();
   }
 
+  Widget _buildImagePreviews() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _imagePaths.length + 1,
+        itemBuilder: (context, index) {
+          if (index < _imagePaths.length) {
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _showFullScreenImage(context, index);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Image.file(
+                      _imagePaths[index],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        _imagePaths.removeAt(index);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return _imagePaths.length < 5
+                ? GestureDetector(
+                    onTap: _getImagePath,
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Icon(Icons.add),
+                    ),
+                  )
+                : const SizedBox();
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _getImagePath() async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles != null) {
+      setState(() {
+        if (_imagePaths.length + pickedFiles.length <= 5) {
+          _imagePaths
+              .addAll(pickedFiles.map((file) => File(file.path)).toList());
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
+          );
+        }
+      });
+    }
+  }
+
   void _showFullScreenImage(BuildContext context, int index) {
     Navigator.push(
       context,
@@ -58,7 +138,7 @@ class _NoteDetailState extends State<NoteDetail> {
             children: [
               Center(
                 child: Image.file(
-                  File(_imagePaths[index]),
+                  _imagePaths[index],
                   fit: BoxFit.contain,
                 ),
               ),
@@ -82,106 +162,117 @@ class _NoteDetailState extends State<NoteDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // xにポストできるボタンを追加
       appBar: AppBar(
         title: const Text('メモ'),
         actions: [
           IconButton(
-            // twiiterの投稿ボタン
             icon: const Icon(Icons.share),
             onPressed: () {},
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              hintText: 'タイトル',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            onChanged: (value) {
-              setState(() {
-                _title = value;
-              });
-            },
-          ),
-          Expanded(
-            child: TextField(
-              controller: _contentController,
-              decoration: const InputDecoration(
-                hintText: '内容',
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(16),
-              ),
-              maxLines: null,
-              onChanged: (value) {
-                setState(() {
-                  _content = value;
-                });
-              },
-            ),
-          ),
-          // TODO: 画像の表示場所を調整
-          _imagePaths.isEmpty
-              ? const SizedBox()
-              : SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _imagePaths.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          _showFullScreenImage(context, index);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(5),
-                          width: 200,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Image.file(
-                            File(_imagePaths[index]),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // フローティングアクションボタン
-      floatingActionButton: Row(
-        // 中心に配置
-        mainAxisSize: MainAxisSize.min,
+      body: Stack(
         children: [
-          // 保存ボタン
-          FloatingActionButton.extended(
-            label: const Text('Save'),
-            icon: const Icon(Icons.save),
-            onPressed: () async {
-              final note = Note(
-                id: widget.note!.id,
-                title: _titleController.text,
-                content: _contentController.text,
-                date: _date,
-                favorite: _favorite,
-                color: _color,
-                imagePaths: _imagePaths,
-              );
-              await DatabaseService().updateNote(note);
-              Navigator.pop(context, true);
-            },
+          Column(
+            children: <Widget>[
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  hintText: 'タイトル',
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _title = value;
+                  });
+                },
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _contentController,
+                  decoration: const InputDecoration(
+                    hintText: '内容',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(16),
+                  ),
+                  maxLines: null,
+                  onChanged: (value) {
+                    setState(() {
+                      _content = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          if (_imagePaths.isNotEmpty)
+            Positioned(
+              bottom: 80,
+              left: 10,
+              right: 10,
+              child: SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _imagePaths.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        _showFullScreenImage(context, index);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        width: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Image.file(
+                          _imagePaths[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  onPressed: _getImagePath,
+                  child: const Icon(Icons.camera_alt),
+                ),
+                const SizedBox(width: 16),
+                FloatingActionButton.extended(
+                  label: const Text('Save'),
+                  icon: const Icon(Icons.save),
+                  onPressed: () async {
+                    final note = Note(
+                      id: widget.note.id,
+                      title: _titleController.text,
+                      content: _contentController.text,
+                      date: _date,
+                      favorite: _favorite,
+                      color: _color,
+                      imagePaths: _imagePaths.map((file) => file.path).toList(),
+                    );
+                    await DatabaseService().updateNote(note);
+                    Navigator.pop(context, true);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
