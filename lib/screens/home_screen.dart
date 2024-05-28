@@ -46,9 +46,7 @@ class _MemoScreenState extends State<MemoScreen>
   bool isButtonEnabled = false;
   // 選択された画像のパス
   String? _selectedImagePath;
-  // 選択された画像
-  File? _selectedImage;
-  //
+  //選択された画像
   List<File> _selectedImages = [];
 
   // 初期化
@@ -132,8 +130,15 @@ class _MemoScreenState extends State<MemoScreen>
     final pickedFiles = await picker.pickMultiImage();
     if (pickedFiles != null) {
       setState(() {
-        _selectedImages = pickedFiles.map((file) => File(file.path)).toList();
-        isButtonEnabled = true;
+        if (_selectedImages.length + pickedFiles.length <= 5) {
+          _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+          isButtonEnabled = true;
+        } else {
+          // 選択できる画像の枚数が5枚を超える場合は、エラーメッセージを表示するなどの処理を行う
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
+          );
+        }
       });
     }
   }
@@ -143,44 +148,61 @@ class _MemoScreenState extends State<MemoScreen>
       height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: _selectedImages.length,
+        itemCount: _selectedImages.length + 1,
         itemBuilder: (context, index) {
-          return Stack(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  _showFullScreenImage(context, index);
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(5),
-                  width: 100,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Image.file(
-                    _selectedImages[index],
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    setState(() {
-                      _selectedImages.removeAt(index);
-                      if (_selectedImages.isEmpty) {
-                        isButtonEnabled = false;
-                      }
-                    });
+          if (index < _selectedImages.length) {
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _showFullScreenImage(context, index);
                   },
+                  child: Container(
+                    margin: const EdgeInsets.all(5),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Image.file(
+                      _selectedImages[index],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          );
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        _selectedImages.removeAt(index);
+                        if (_selectedImages.isEmpty) {
+                          isButtonEnabled = false;
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return _selectedImages.length < 5
+                ? GestureDetector(
+                    onTap: _getImagePath,
+                    child: Container(
+                      margin: const EdgeInsets.all(5),
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Icon(Icons.add),
+                    ),
+                  )
+                : const SizedBox();
+          }
         },
       ),
     );
@@ -345,16 +367,6 @@ class _MemoScreenState extends State<MemoScreen>
                         },
                       ),
                     ),
-                    // TODO: 保存ボタンを押下したら画像を非表示にする
-                    // TODO: 選択した画像を削除するボタンを追加
-                    _selectedImage == null
-                        ? const SizedBox()
-                        : Image.file(
-                            _selectedImage!,
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
                   ],
                 ),
               ),
@@ -442,7 +454,7 @@ class _MemoScreenState extends State<MemoScreen>
                       setState(() {
                         isFavorite = 0;
                         isButtonEnabled = false;
-                        _selectedImage = null;
+                        _selectedImages = [];
                       });
                     }
                   : null,
@@ -474,18 +486,8 @@ class _MemoScreenState extends State<MemoScreen>
                 setState(() {
                   isFavorite = 0;
                   isButtonEnabled = false;
-                  _selectedImage = null;
+                  _selectedImages = [];
                 });
-              },
-            ),
-          // // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // カメラボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              child: const Icon(Icons.camera_alt),
-              onPressed: () async {
-                await _getImagePath();
               },
             ),
         ],
