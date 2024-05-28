@@ -38,7 +38,7 @@ class DatabaseService {
 
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite INTEGER, color TEXT, imagePath TEXT)');
+        'CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT, favorite INTEGER, color TEXT, imagePaths TEXT)');
   }
 
   Future<List<Note>> getNotes() async {
@@ -53,18 +53,22 @@ class DatabaseService {
     return result;
   }
 
-  Future<void> insertNote(Map<String, dynamic> note) async {
+  Future<void> insertNote(Note note) async {
     final db = await database;
-    await db.insert('notes', note);
+    await db.insert(
+      'notes',
+      note.toMap(),
+      // conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
-  Future<void> updateNote(Map<String, dynamic> note) async {
+  Future<void> updateNote(Note note) async {
     final db = await database;
     await db.update(
       'notes',
-      note,
+      note.toMap(),
       where: 'id = ?',
-      whereArgs: [note['id']],
+      whereArgs: [note.id],
     );
   }
 

@@ -89,7 +89,7 @@ class _MemoScreenState extends State<MemoScreen>
     // タイトルが空かつ本文が空かつ、画像が選択されている場合
     if (titleController.text.isEmpty &&
         bodyTextController.text.isEmpty &&
-        _selectedImagePath!.isNotEmpty) {
+        _selectedImages.isNotEmpty) {
       // pic Note 2021-09-01 12:34のように表示する
       titleController.text =
           'pic Note ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
@@ -110,11 +110,10 @@ class _MemoScreenState extends State<MemoScreen>
       title: titleController.text,
       content: bodyTextController.text,
       date: now.toIso8601String(),
-      imagePath: _selectedImagePath ?? '',
+      imagePaths: _selectedImages.map((file) => file.path).toList(),
     );
 
-    // databaseServiceのinsertNoteメソッドを呼び出す
-    await DatabaseService().insertNote(note.toMap());
+    await DatabaseService().insertNote(note);
     _getNote();
   }
 
@@ -385,8 +384,7 @@ class _MemoScreenState extends State<MemoScreen>
                           });
 
                           // データベースのお気に入り状態を更新する処理
-                          await DatabaseService()
-                              .updateNote(notes[index].toMap());
+                          await DatabaseService().updateNote(notes[index]);
 
                           // メモを取得する
                           _getNote();

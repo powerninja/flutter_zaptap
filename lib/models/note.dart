@@ -7,7 +7,7 @@ class Note {
   final String date;
   int favorite;
   final String color;
-  final String? imagePath;
+  final List<String>? imagePaths;
 
   Note({
     required this.id,
@@ -16,7 +16,7 @@ class Note {
     required this.date,
     required this.favorite,
     required this.color,
-    this.imagePath,
+    this.imagePaths,
   });
 
   Map<String, dynamic> toMap() {
@@ -27,7 +27,7 @@ class Note {
       'title': title,
       'content': content,
       'date': date,
-      'imagePath': imagePath,
+      'imagePaths': imagePaths?.join(','),
     };
   }
 
@@ -39,7 +39,7 @@ class Note {
       title: map['title'],
       content: map['content'],
       date: map['date'],
-      imagePath: map['imagePath'],
+      imagePaths: (map['imagePaths'] as String).split(','),
     );
   }
 
@@ -51,7 +51,7 @@ class Note {
       title: json['title'],
       content: json['content'],
       date: json['date'],
-      imagePath: json['imagePath'],
+      imagePaths: (json['imagePaths'] as String).split(','),
     );
   }
 
@@ -63,12 +63,12 @@ class Note {
 
   static Future<void> insertNote(Note note) async {
     final databaseService = DatabaseService();
-    await databaseService.insertNote(note.toMap());
+    await databaseService.insertNote(note);
   }
 
   static Future<void> updateNote(Note note) async {
     final databaseService = DatabaseService();
-    await databaseService.updateNote(note.toMap());
+    await databaseService.updateNote(note);
   }
 
   static Future<void> deleteNote(String id) async {
