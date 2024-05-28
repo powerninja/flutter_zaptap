@@ -23,7 +23,7 @@ class _NoteDetailState extends State<NoteDetail> {
   late String _content;
   late String _date;
   late String _color;
-  late String _imagePath;
+  late List<String> _imagePaths;
   late int _favorite;
 
   @override
@@ -34,7 +34,7 @@ class _NoteDetailState extends State<NoteDetail> {
     _content = widget.note!.content;
     _date = widget.note!.date;
     _color = widget.note!.color;
-    _imagePath = widget.note!.imagePath!;
+    _imagePaths = widget.note!.imagePaths?.toList() ?? <String>[];
     _favorite = widget.note!.favorite;
 
     _titleController = TextEditingController(text: _title);
@@ -46,6 +46,37 @@ class _NoteDetailState extends State<NoteDetail> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  void _showFullScreenImage(BuildContext context, int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Center(
+                child: Image.file(
+                  File(_imagePaths[index]),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -98,13 +129,33 @@ class _NoteDetailState extends State<NoteDetail> {
             ),
           ),
           // TODO: 画像の表示場所を調整
-          _imagePath == ''
+          _imagePaths.isEmpty
               ? const SizedBox()
-              : Image.file(
-                  File(_imagePath),
+              : SizedBox(
                   height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _imagePaths.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          _showFullScreenImage(context, index);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          width: 200,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Image.file(
+                            File(_imagePaths[index]),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
         ],
       ),
@@ -126,10 +177,9 @@ class _NoteDetailState extends State<NoteDetail> {
                 date: _date,
                 favorite: _favorite,
                 color: _color,
-                imagePath: _imagePath,
+                imagePaths: _imagePaths,
               );
-              await DatabaseService().updateNote(note.toMap());
-
+              await DatabaseService().updateNote(note);
               Navigator.pop(context, true);
             },
           ),
