@@ -48,6 +48,8 @@ class _MemoScreenState extends State<MemoScreen>
   String? _selectedImagePath;
   // 選択された画像
   File? _selectedImage;
+  //
+  List<File> _selectedImages = [];
 
   // 初期化
   @override
@@ -127,14 +129,92 @@ class _MemoScreenState extends State<MemoScreen>
   // 画像を取得する
   Future<void> _getImagePath() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    final pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles != null) {
       setState(() {
-        _selectedImagePath = pickedFile.path;
-        _selectedImage = File(pickedFile.path);
+        _selectedImages = pickedFiles.map((file) => File(file.path)).toList();
         isButtonEnabled = true;
       });
     }
+  }
+
+  Widget _buildImagePreviews() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _selectedImages.length,
+        itemBuilder: (context, index) {
+          return Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _showFullScreenImage(context, index);
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(5),
+                  width: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Image.file(
+                    _selectedImages[index],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      _selectedImages.removeAt(index);
+                      if (_selectedImages.isEmpty) {
+                        isButtonEnabled = false;
+                      }
+                    });
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showFullScreenImage(BuildContext context, int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Center(
+                child: Image.file(
+                  _selectedImages[index],
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -315,6 +395,13 @@ class _MemoScreenState extends State<MemoScreen>
                     ),
             ],
           ),
+          if (_isShowingMemoDetail)
+            Positioned(
+              bottom: 100,
+              left: 0,
+              right: 0,
+              child: _buildImagePreviews(),
+            ),
         ],
       ),
       // フローティングアクションボタン
