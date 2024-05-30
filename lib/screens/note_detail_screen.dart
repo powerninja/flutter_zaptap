@@ -250,11 +250,13 @@ class _NoteDetailState extends State<NoteDetail> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 FloatingActionButton(
+                  heroTag: "heroCameraButtonDetail",
                   onPressed: _getImagePath,
                   child: const Icon(Icons.camera_alt),
                 ),
                 const SizedBox(width: 16),
                 FloatingActionButton.extended(
+                  heroTag: "heroSaveButtonDetail",
                   label: const Text('Save'),
                   icon: const Icon(Icons.save),
                   onPressed: () async {

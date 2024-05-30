@@ -422,6 +422,7 @@ class _MemoScreenState extends State<MemoScreen>
           // 保存ボタン
           if (_isShowingMemoDetail)
             FloatingActionButton.extended(
+              heroTag: "heroSaveButton",
               label: const Text('Save'),
               icon: const Icon(Icons.save),
               // 本文に何か入力されている場合のみ、ボタンを有効にする
@@ -463,6 +464,7 @@ class _MemoScreenState extends State<MemoScreen>
           // お気に入りボタン
           if (_isShowingMemoDetail)
             FloatingActionButton(
+              heroTag: "heroFavoriteButton",
               child: isFavorite == 1
                   ? const Icon(Icons.push_pin)
                   : const Icon(Icons.push_pin_outlined),
@@ -477,6 +479,7 @@ class _MemoScreenState extends State<MemoScreen>
           // クリアボタン
           if (_isShowingMemoDetail)
             FloatingActionButton(
+              heroTag: "heroClearButton",
               child: const Icon(Icons.delete),
               onPressed: () {
                 bodyTextController.clear();
