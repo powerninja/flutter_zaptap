@@ -35,7 +35,7 @@ class _NoteDetailState extends State<NoteDetail> {
     _date = widget.note.date;
     _color = widget.note.color;
     _imagePaths =
-        widget.note.imagePaths?.map((path) => File(path)).toList() ?? <File>[];
+        widget.note.imagePaths?.map((path) => File(path)).toList() ?? [];
     _favorite = widget.note.favorite;
 
     _titleController = TextEditingController(text: _title);
@@ -47,68 +47,6 @@ class _NoteDetailState extends State<NoteDetail> {
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
-  }
-
-  Widget _buildImagePreviews() {
-    return SizedBox(
-      height: 100,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _imagePaths.length + 1,
-        itemBuilder: (context, index) {
-          if (index < _imagePaths.length) {
-            return Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _showFullScreenImage(context, index);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.all(5),
-                    width: 100,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Image.file(
-                      _imagePaths[index],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        _imagePaths.removeAt(index);
-                      });
-                    },
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return _imagePaths.length < 5
-                ? GestureDetector(
-                    onTap: _getImagePath,
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      width: 100,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Icon(Icons.add),
-                    ),
-                  )
-                : const SizedBox();
-          }
-        },
-      ),
-    );
   }
 
   Future<void> _getImagePath() async {
@@ -155,6 +93,60 @@ class _NoteDetailState extends State<NoteDetail> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImagePreviews() {
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _imagePaths.length,
+        itemBuilder: (context, index) {
+          return Stack(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _showFullScreenImage(context, index);
+                },
+                child: Container(
+                  margin: const EdgeInsets.all(5),
+                  width: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Stack(children: [
+                        Image.file(
+                          _imagePaths[index],
+                          fit: BoxFit.cover,
+                          width: 200,
+                          height: 200,
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                // _selectedImages.removeAt(index);
+                                // if (_selectedImages.isEmpty) {
+                                //   isButtonEnabled = false;
+                                // }
+                              });
+                            },
+                          ),
+                        ),
+                      ])),
+                ),
+              )
+            ],
+          );
+        },
       ),
     );
   }
@@ -211,38 +203,14 @@ class _NoteDetailState extends State<NoteDetail> {
               ),
             ],
           ),
-          if (_imagePaths.isNotEmpty)
-            Positioned(
-              bottom: 80,
-              left: 10,
-              right: 10,
-              child: SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _imagePaths.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        _showFullScreenImage(context, index);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        width: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Image.file(
-                          _imagePaths[index],
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+          _imagePaths[0].path != ''
+              ? Positioned(
+                  bottom: 80,
+                  left: 10,
+                  right: 10,
+                  child: _buildImagePreviews(),
+                )
+              : Container(),
           Positioned(
             bottom: 16,
             right: 16,
