@@ -46,8 +46,6 @@ class _MemoScreenState extends State<MemoScreen>
   int isFavorite = 0;
   // 保存ボタンの有効/無効を管理する変数
   bool isButtonEnabled = false;
-  // 選択された画像のパス
-  String? _selectedImagePath;
   //選択された画像
   List<File> _selectedImages = [];
   // 画像のパス
@@ -493,9 +491,9 @@ class _MemoScreenState extends State<MemoScreen>
               // 本文に何か入力されている場合のみ、ボタンを有効にする
               backgroundColor: !isButtonEnabled ? Colors.grey : null,
               onPressed: isButtonEnabled
-                  ? () {
+                  ? () async {
                       // メモを保存する
-                      _saveNote();
+                      await _saveNote();
                       // メモを取得する
                       _getNote();
                       // 雷アイコンを表示する
