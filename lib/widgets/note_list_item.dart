@@ -7,6 +7,7 @@ class NoteListItem extends StatelessWidget {
   final Function(Note) onTap;
   final Function(Note) onDismissed;
   final Function(Note) onNoteUpdated;
+  final String filePath;
 
   const NoteListItem({
     Key? key,
@@ -14,6 +15,7 @@ class NoteListItem extends StatelessWidget {
     required this.onTap,
     required this.onDismissed,
     required this.onNoteUpdated,
+    required this.filePath,
   }) : super(key: key);
 
   @override
@@ -44,7 +46,7 @@ class NoteListItem extends StatelessWidget {
           final updateNoteCalled = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NoteDetail(note: note),
+              builder: (context) => NoteDetail(note: note, filePath: filePath),
             ),
           );
           // メモが更新された場合は、onNoteUpdatedコールバックを呼び出す

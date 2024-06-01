@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import '../services/database_service.dart';
 import '../models/note.dart';
 import 'package:image_picker/image_picker.dart';
 
 class NoteDetail extends StatefulWidget {
   final Note note;
+  final String filePath;
 
   const NoteDetail({
     Key? key,
     required this.note,
+    required this.filePath,
   }) : super(key: key);
 
   @override
@@ -29,13 +32,16 @@ class _NoteDetailState extends State<NoteDetail> {
   @override
   void initState() {
     super.initState();
+    _imagePaths = [];
+
+    for (var i = 0; i < widget.note.imagePaths!.length; i++) {
+      _imagePaths.add(File(widget.filePath + widget.note.imagePaths![i]));
+    }
 
     _title = widget.note.title;
     _content = widget.note.content;
     _date = widget.note.date;
     _color = widget.note.color;
-    _imagePaths =
-        widget.note.imagePaths?.map((path) => File(path)).toList() ?? [];
     _favorite = widget.note.favorite;
 
     _titleController = TextEditingController(text: _title);
@@ -249,3 +255,5 @@ class _NoteDetailState extends State<NoteDetail> {
     );
   }
 }
+
+//TODO: 一度画像を保存し、アプリを再度実行すると、パスは保存されているが画像が表示されない

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../widgets/lightning_icon.dart';
 import '../widgets/note_list_item.dart';
 import '../models/note.dart';
@@ -48,6 +50,8 @@ class _MemoScreenState extends State<MemoScreen>
   String? _selectedImagePath;
   //選択された画像
   List<File> _selectedImages = [];
+  // 画像のパス
+  String? _filePath;
 
   // 初期化
   @override
@@ -74,6 +78,7 @@ class _MemoScreenState extends State<MemoScreen>
         });
       }
     });
+    getLocalPath();
   }
 
   // timerを破棄する
@@ -81,6 +86,65 @@ class _MemoScreenState extends State<MemoScreen>
   void dispose() {
     _timer?.cancel(); // Timerを破棄する
     super.dispose();
+  }
+
+  // 一時ファイルから画像を移動する
+  Future<List<String>> moveImagesFromTmp(List<File> tempImageFiles) async {
+    final movedImages = <File>[];
+    final uuid = Uuid();
+    final fileNames = <String>[];
+
+    final moveImageFutures = tempImageFiles.map((tempImageFile) async {
+      try {
+        if (await tempImageFile.exists()) {
+          final noteId = uuid.v7();
+          final timestamp = DateTime.now().millisecondsSinceEpoch;
+          final fileName = '${noteId}_$timestamp.png';
+          moveImage(tempImageFile, fileName);
+          fileNames.add(fileName);
+          return fileName;
+        } else {
+          print('Temp image file does not exist: ${tempImageFile.path}');
+          return null;
+        }
+      } catch (e) {
+        print('Error moving image: $e');
+        return null;
+      }
+    });
+
+    final movedImageResults = await Future.wait(moveImageFutures);
+    movedImages.addAll(movedImageResults.whereType<File>());
+    return fileNames;
+  }
+
+  // 画像を移動する
+  void moveImage(File sourceFile, String fileName) async {
+    try {
+      if (await sourceFile.exists()) {
+        final localPath = await getLocalPath();
+        final destinationPath = '$localPath/$fileName';
+
+        // 移動先にファイルをコピー
+        await sourceFile.copy(destinationPath);
+
+        // 元の一時ファイルを削除
+        await sourceFile.delete();
+      } else {
+        print('Source file does not exist: ${sourceFile.path}');
+        return null;
+      }
+    } catch (e) {
+      print('Error moving image: $e');
+      return null;
+    }
+  }
+
+  // ローカルパスを取得する
+  Future<String> getLocalPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    _filePath = '${directory.path}/';
+    return directory.path;
   }
 
   // メモを保存する
@@ -99,6 +163,7 @@ class _MemoScreenState extends State<MemoScreen>
           : bodyTextController.text.length;
       titleController.text = bodyTextController.text.substring(0, titleLength);
     }
+    final fileNames = await moveImagesFromTmp(_selectedImages);
     // UUIDの生成
     const uuid = Uuid();
     String noteId = uuid.v7();
@@ -110,9 +175,8 @@ class _MemoScreenState extends State<MemoScreen>
       title: titleController.text,
       content: bodyTextController.text,
       date: now.toIso8601String(),
-      imagePaths: _selectedImages.map((file) => file.path).toList(),
+      imagePaths: fileNames,
     );
-
     await DatabaseService().insertNote(note);
     _getNote();
   }
@@ -376,6 +440,7 @@ class _MemoScreenState extends State<MemoScreen>
                       itemCount: notes.length,
                       itemBuilder: (context, index) => NoteListItem(
                         note: notes[index],
+                        filePath: _filePath ?? '',
                         onTap: (note) async {
                           // メモのお気に入り状態を更新する処理
                           setState(() {
