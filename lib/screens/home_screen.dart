@@ -86,6 +86,7 @@ class _MemoScreenState extends State<MemoScreen>
     super.dispose();
   }
 
+  //TODO: 別ファイルに切り出す
   // 一時ファイルから画像を移動する
   Future<List<String>> moveImagesFromTmp(List<File> tempImageFiles) async {
     final movedImages = <File>[];
@@ -202,6 +203,8 @@ class _MemoScreenState extends State<MemoScreen>
     });
   }
 
+  //TODO: 文字とかぶってしまうため、どうにかする
+  // 画像プレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
       height: 100,
@@ -267,6 +270,7 @@ class _MemoScreenState extends State<MemoScreen>
     );
   }
 
+  // 画像をフルスクリーンで表示する
   void _showFullScreenImage(BuildContext context, int index) {
     Navigator.push(
       context,

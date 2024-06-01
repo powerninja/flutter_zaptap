@@ -57,6 +57,7 @@ class _NoteDetailState extends State<NoteDetail> {
     super.dispose();
   }
 
+  // 画像を選択する
   Future<void> _getImagePath() async {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
@@ -71,6 +72,7 @@ class _NoteDetailState extends State<NoteDetail> {
     });
   }
 
+  // 画像をタップしたときにフルスクリーンで表示する
   void _showFullScreenImage(BuildContext context, int index) {
     Navigator.push(
       context,
@@ -102,6 +104,9 @@ class _NoteDetailState extends State<NoteDetail> {
     );
   }
 
+  //TODO: 文字とかぶってしまうため、どうにかする
+  //TODO: 画像を削除する機能を追加する
+  //画像のプレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
       height: 200,
@@ -240,6 +245,7 @@ class _NoteDetailState extends State<NoteDetail> {
                       date: _date,
                       favorite: _favorite,
                       color: _color,
+                      //TODO: 画像のファイル名を保存する
                       imagePaths: _imagePaths.map((file) => file.path).toList(),
                     );
                     await DatabaseService().updateNote(note);
