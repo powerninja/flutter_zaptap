@@ -32,9 +32,12 @@ class _NoteDetailState extends State<NoteDetail> {
   void initState() {
     super.initState();
     _imagePaths = [];
-
-    for (var i = 0; i < widget.note.imagePaths!.length; i++) {
-      _imagePaths.add(File(widget.filePath + widget.note.imagePaths![i]));
+    if (widget.note.imagePaths?[0].isNotEmpty == true) {
+      for (var i = 0; i < widget.note.imagePaths!.length; i++) {
+        _imagePaths.add(File(widget.filePath + widget.note.imagePaths![i]));
+      }
+    } else {
+      _imagePaths = [];
     }
 
     _title = widget.note.title;
@@ -208,7 +211,7 @@ class _NoteDetailState extends State<NoteDetail> {
               ),
             ],
           ),
-          _imagePaths[0].path != ''
+          _imagePaths.isNotEmpty
               ? Positioned(
                   bottom: 80,
                   left: 10,
