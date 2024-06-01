@@ -189,19 +189,17 @@ class _MemoScreenState extends State<MemoScreen>
   Future<void> _getImagePath() async {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
-    if (pickedFiles != null) {
-      setState(() {
-        if (_selectedImages.length + pickedFiles.length <= 5) {
-          _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
-          isButtonEnabled = true;
-        } else {
-          // 選択できる画像の枚数が5枚を超える場合は、エラーメッセージを表示するなどの処理を行う
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
-          );
-        }
-      });
-    }
+    setState(() {
+      if (_selectedImages.length + pickedFiles.length <= 5) {
+        _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
+        isButtonEnabled = true;
+      } else {
+        // 選択できる画像の枚数が5枚を超える場合は、エラーメッセージを表示するなどの処理を行う
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
+        );
+      }
+    });
   }
 
   Widget _buildImagePreviews() {

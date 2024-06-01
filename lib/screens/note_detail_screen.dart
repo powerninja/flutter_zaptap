@@ -60,18 +60,15 @@ class _NoteDetailState extends State<NoteDetail> {
   Future<void> _getImagePath() async {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
-    if (pickedFiles != null) {
-      setState(() {
-        if (_imagePaths.length + pickedFiles.length <= 5) {
-          _imagePaths
-              .addAll(pickedFiles.map((file) => File(file.path)).toList());
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
-          );
-        }
-      });
-    }
+    setState(() {
+      if (_imagePaths.length + pickedFiles.length <= 5) {
+        _imagePaths.addAll(pickedFiles.map((file) => File(file.path)).toList());
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
+        );
+      }
+    });
   }
 
   void _showFullScreenImage(BuildContext context, int index) {
