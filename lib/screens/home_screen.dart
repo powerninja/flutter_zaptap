@@ -203,6 +203,19 @@ class _MemoScreenState extends State<MemoScreen>
     });
   }
 
+  // カメラを起動して写真を撮影する
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    //カメラを起動して写真を撮影
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImages.add(File(pickedFile.path));
+        isButtonEnabled = true;
+      });
+    }
+  }
+
   //TODO: 文字とかぶってしまうため、どうにかする
   // 画像プレビューを表示する
   Widget _buildImagePreviews() {
@@ -556,6 +569,19 @@ class _MemoScreenState extends State<MemoScreen>
                 });
               },
             ),
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // カメラボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              //TODO: 5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
+              heroTag: "heroCameraButton",
+              child: const Icon(Icons.camera_alt),
+              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
+              onPressed: () {
+                pickImage();
+              },
+            ),
         ],
       ),
     );
@@ -563,5 +589,4 @@ class _MemoScreenState extends State<MemoScreen>
 }
 
 // TODO: メモ一覧画面のデザインを変更
-// TODO: 写真の保存機能を追加
-// TODO: タイトルを入力せずに保存ボタンを押下した場合、タイトルを自動生成する
+// TODO: 写真の保存機能を追加 → 作成画面からは追加済み、編集画面からはまだ
