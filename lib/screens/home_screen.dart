@@ -539,4 +539,3 @@ class _MemoScreenState extends State<MemoScreen>
 // TODO: 写真の保存機能を追加 → 作成画面からは追加済み、編集画面からはまだ
 // TODO: メモ一覧画面の検索機能を追加する
 // TODO: メモ詳細画面で画像の削除を行う
-// TODO: メモ詳細画面で保存ボタンを押下するとエラーが出る
