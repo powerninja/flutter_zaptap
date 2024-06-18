@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/note.dart';
 import 'package:image_picker/image_picker.dart';
+import '../services/image_service.dart';
 
 class NoteDetail extends StatefulWidget {
   final Note note;
@@ -238,6 +239,11 @@ class _NoteDetailState extends State<NoteDetail> {
                   label: const Text('Save'),
                   icon: const Icon(Icons.save),
                   onPressed: () async {
+                    // ImageServiceクラスをインスタンス化
+                    final ImageService imageService = ImageService();
+                    // 画像を一時ファイルから保存先に移動し、ファイル名を取得
+                    final List<String> fileNames =
+                        await imageService.moveImagesFromTmp(_imagePaths);
                     final note = Note(
                       id: widget.note.id,
                       title: _titleController.text,
@@ -245,8 +251,7 @@ class _NoteDetailState extends State<NoteDetail> {
                       date: _date,
                       favorite: _favorite,
                       color: _color,
-                      //TODO: 画像のファイル名を保存する
-                      imagePaths: _imagePaths.map((file) => file.path).toList(),
+                      imagePaths: fileNames,
                     );
                     await DatabaseService().updateNote(note);
                     Navigator.pop(context, true);
