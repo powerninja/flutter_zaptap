@@ -144,10 +144,8 @@ class _NoteDetailState extends State<NoteDetail> {
                             icon: const Icon(Icons.close, color: Colors.white),
                             onPressed: () {
                               setState(() {
-                                // _selectedImages.removeAt(index);
-                                // if (_selectedImages.isEmpty) {
-                                //   isButtonEnabled = false;
-                                // }
+                                // 画像を削除
+                                _imagePaths.removeAt(index);
                               });
                             },
                           ),
