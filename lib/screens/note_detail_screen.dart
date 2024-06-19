@@ -73,6 +73,27 @@ class _NoteDetailState extends State<NoteDetail> {
     });
   }
 
+  // テキストをアップデートする
+  Future _updateNote() async {
+    // ImageServiceクラスをインスタンス化
+    final ImageService imageService = ImageService();
+    // 画像を一時ファイルから保存先に移動し、ファイル名を取得
+    final List<String> fileNames =
+        await imageService.moveImagesFromTmp(_imagePaths);
+    // ノートをアップデートするためにNoteクラスをインスタンス化
+    final note = Note(
+      id: widget.note.id,
+      title: _titleController.text,
+      content: _contentController.text,
+      date: _date,
+      favorite: _favorite,
+      color: _color,
+      imagePaths: fileNames,
+    );
+    // ノートをアップデートする
+    await DatabaseService().updateNote(note);
+  }
+
   // 画像をタップしたときにフルスクリーンで表示する
   void _showFullScreenImage(BuildContext context, int index) {
     Navigator.push(
@@ -143,9 +164,10 @@ class _NoteDetailState extends State<NoteDetail> {
                           child: IconButton(
                             icon: const Icon(Icons.close, color: Colors.white),
                             onPressed: () {
-                              setState(() {
+                              setState(() async {
                                 // 画像を削除
                                 _imagePaths.removeAt(index);
+                                await _updateNote();
                               });
                             },
                           ),
@@ -237,21 +259,7 @@ class _NoteDetailState extends State<NoteDetail> {
                   label: const Text('Save'),
                   icon: const Icon(Icons.save),
                   onPressed: () async {
-                    // ImageServiceクラスをインスタンス化
-                    final ImageService imageService = ImageService();
-                    // 画像を一時ファイルから保存先に移動し、ファイル名を取得
-                    final List<String> fileNames =
-                        await imageService.moveImagesFromTmp(_imagePaths);
-                    final note = Note(
-                      id: widget.note.id,
-                      title: _titleController.text,
-                      content: _contentController.text,
-                      date: _date,
-                      favorite: _favorite,
-                      color: _color,
-                      imagePaths: fileNames,
-                    );
-                    await DatabaseService().updateNote(note);
+                    await _updateNote();
                     Navigator.pop(context, true);
                   },
                 ),
@@ -263,5 +271,3 @@ class _NoteDetailState extends State<NoteDetail> {
     );
   }
 }
-
-//TODO: 一度画像を保存し、アプリを再度実行すると、パスは保存されているが画像が表示されない
