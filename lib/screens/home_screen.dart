@@ -99,6 +99,15 @@ class _MemoScreenState extends State<MemoScreen>
       // pic Note 2021-09-01 12:34のように表示する
       titleController.text =
           'pic Note ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+      // タイトルが空の場合、本文の最初の16文字をタイトルにする かつ 本文に改行が含まれている場合
+    } else if (titleController.text.isEmpty &&
+        bodyTextController.text.toString().contains('\n')) {
+      final titleLength = bodyTextController.text.length > 16
+          ? 15
+          // 改行が含まれている場合は、最初の改行までをタイトルにする
+          : bodyTextController.text.toString().indexOf('\n');
+      titleController.text = bodyTextController.text.substring(0, titleLength);
+      // タイトルが空の場合、本文の最初の16文字をタイトルにする
     } else if (titleController.text.isEmpty) {
       final titleLength = bodyTextController.text.length > 16
           ? 15
@@ -539,3 +548,9 @@ class _MemoScreenState extends State<MemoScreen>
 // TODO: メモ一覧画面のデザインを変更
 // TODO: メモ一覧画面の検索機能を追加する
 // TODO: メモ作成画面とメモ詳細画面のボタンを揃える
+// TODO: メモ詳細画面で、写真が5枚選択されている場合は、カメラボタンを押下できないようにする
+// TODO: キーボードの上にdoneボタンを追加する
+// TODO: 画像は、メモ内に組み込む？
+  // キーボードを表示すると邪魔になるので、画像をメモ内に組み込む
+// TODO: 画像をフルスクリーンにした場合、右上のバツボタンを押さなくても、画面をタップするだけで閉じられるようにする
+// TODO: shareボタン実装
