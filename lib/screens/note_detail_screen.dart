@@ -73,13 +73,18 @@ class _NoteDetailState extends State<NoteDetail> {
     });
   }
 
-  // テキストをアップデートする
+  // ノートをアップデートする
   Future _updateNote() async {
     // ImageServiceクラスをインスタンス化
     final ImageService imageService = ImageService();
+    List<String> fileNames = [];
     // 画像を一時ファイルから保存先に移動し、ファイル名を取得
-    final List<String> fileNames =
-        await imageService.moveImagesFromTmp(_imagePaths);
+    if (_imagePaths.isNotEmpty) {
+      fileNames = await imageService.moveImagesFromTmp(_imagePaths);
+    }
+    // 更新日時を取得
+    DateTime now = DateTime.now();
+    _date = now.toIso8601String();
     // ノートをアップデートするためにNoteクラスをインスタンス化
     final note = Note(
       id: widget.note.id,
@@ -163,12 +168,12 @@ class _NoteDetailState extends State<NoteDetail> {
                           right: 0,
                           child: IconButton(
                             icon: const Icon(Icons.close, color: Colors.white),
-                            onPressed: () {
-                              setState(() async {
+                            onPressed: () async {
+                              setState(() {
                                 // 画像を削除
                                 _imagePaths.removeAt(index);
-                                await _updateNote();
                               });
+                              await _updateNote();
                             },
                           ),
                         ),
@@ -248,6 +253,12 @@ class _NoteDetailState extends State<NoteDetail> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                FloatingActionButton(
+                  heroTag: "heroPhotoButtonDetail",
+                  onPressed: _getImagePath,
+                  child: const Icon(Icons.photo),
+                ),
+                const SizedBox(width: 16),
                 FloatingActionButton(
                   heroTag: "heroCameraButtonDetail",
                   onPressed: _getImagePath,

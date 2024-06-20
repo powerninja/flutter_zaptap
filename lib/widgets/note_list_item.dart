@@ -43,16 +43,15 @@ class NoteListItem extends StatelessWidget {
         ),
         trailing: const Icon(Icons.arrow_forward),
         onTap: () async {
-          final updateNoteCalled = await Navigator.push(
+          // メモ詳細画面に遷移
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => NoteDetail(note: note, filePath: filePath),
             ),
           );
           // メモが更新された場合は、onNoteUpdatedコールバックを呼び出す
-          if (updateNoteCalled ?? false) {
-            onNoteUpdated(note);
-          }
+          onNoteUpdated(note);
         },
       ),
     );
