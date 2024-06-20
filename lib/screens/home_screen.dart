@@ -381,7 +381,7 @@ class _MemoScreenState extends State<MemoScreen>
                         // 画面アクセス時にキーボードを表示する
                         focusNode: focusNode,
                         decoration: const InputDecoration(
-                            hintText: 'Just start typing...',
+                            hintText: 'Just start Flick typing...',
                             border: InputBorder.none),
                         maxLines: null,
                         onChanged: (value) {
