@@ -78,13 +78,36 @@ class _NoteDetailState extends State<NoteDetail> {
     // ImageServiceクラスをインスタンス化
     final ImageService imageService = ImageService();
     List<String> fileNames = [];
+    // 更新日時を取得
+    DateTime now = DateTime.now();
+    _date = now.toIso8601String();
     // 画像を一時ファイルから保存先に移動し、ファイル名を取得
     if (_imagePaths.isNotEmpty) {
       fileNames = await imageService.moveImagesFromTmp(_imagePaths);
     }
-    // 更新日時を取得
-    DateTime now = DateTime.now();
-    _date = now.toIso8601String();
+    //TODO: 共通処理にしても良さそう
+    if (_titleController.text.isEmpty &&
+        _contentController.text.isEmpty &&
+        _imagePaths.isNotEmpty) {
+      // pic Note 2021-09-01 12:34のように表示する
+      _titleController.text =
+          'pic Note ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+      // タイトルが空の場合、本文の最初の16文字をタイトルにする かつ 本文に改行が含まれている場合
+    } else if (_titleController.text.isEmpty &&
+        _contentController.text.toString().contains('\n')) {
+      final titleLength = _contentController.text.length > 16
+          ? 15
+          // 改行が含まれている場合は、最初の改行までをタイトルにする
+          : _contentController.text.toString().indexOf('\n');
+      _titleController.text = _contentController.text.substring(0, titleLength);
+      // タイトルが空の場合、本文の最初の16文字をタイトルにする
+    } else if (_titleController.text.isEmpty) {
+      final titleLength = _contentController.text.length > 16
+          ? 15
+          : _contentController.text.length;
+      _titleController.text = _contentController.text.substring(0, titleLength);
+    }
+
     // ノートをアップデートするためにNoteクラスをインスタンス化
     final note = Note(
       id: widget.note.id,
@@ -206,7 +229,7 @@ class _NoteDetailState extends State<NoteDetail> {
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
-                  hintText: 'タイトル',
+                  hintText: 'Untitled',
                   border: InputBorder.none,
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -225,7 +248,7 @@ class _NoteDetailState extends State<NoteDetail> {
                 child: TextField(
                   controller: _contentController,
                   decoration: const InputDecoration(
-                    hintText: '内容',
+                    hintText: 'Just start Flick typing...',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
                   ),
