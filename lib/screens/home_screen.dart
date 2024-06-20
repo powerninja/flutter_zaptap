@@ -520,13 +520,15 @@ class _MemoScreenState extends State<MemoScreen>
           // カメラボタン
           if (_isShowingMemoDetail)
             FloatingActionButton(
-              //TODO: 5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
               heroTag: "heroCameraButton",
               child: const Icon(Icons.camera_alt),
               //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
-              onPressed: () {
-                pickImage();
-              },
+              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
+              onPressed: _selectedImages.length >= 5
+                  ? null
+                  : () async {
+                      pickImage();
+                    },
             ),
         ],
       ),
