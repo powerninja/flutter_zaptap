@@ -58,7 +58,6 @@ class ImageService {
   // ローカルパスを取得する
   Future<String> getLocalPath() async {
     final directory = await getApplicationDocumentsDirectory();
-    final _filePath = '${directory.path}/';
     return directory.path;
   }
 
