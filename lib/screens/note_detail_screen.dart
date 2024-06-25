@@ -74,7 +74,7 @@ class _NoteDetailState extends State<NoteDetail> {
   }
 
   // ノートをアップデートする
-  Future _updateNote() async {
+  Future _updateNote(bool isDelete) async {
     // ImageServiceクラスをインスタンス化
     final ImageService imageService = ImageService();
     List<String> fileNames = [];
@@ -82,8 +82,13 @@ class _NoteDetailState extends State<NoteDetail> {
     DateTime now = DateTime.now();
     _date = now.toIso8601String();
     // 画像を一時ファイルから保存先に移動し、ファイル名を取得
-    if (_imagePaths.isNotEmpty) {
+    if (_imagePaths.isNotEmpty && !isDelete) {
       fileNames = await imageService.moveImagesFromTmp(_imagePaths);
+    } else if (isDelete) {
+      // _imagePathsからファイル名のみ切り出し
+      for (var i = 0; i < _imagePaths.length; i++) {
+        fileNames.add(_imagePaths[i].path.split('/').last);
+      }
     }
     //TODO: 共通処理にしても良さそう
     if (_titleController.text.isEmpty &&
@@ -196,7 +201,7 @@ class _NoteDetailState extends State<NoteDetail> {
                                 // 画像を削除
                                 _imagePaths.removeAt(index);
                               });
-                              await _updateNote();
+                              await _updateNote(true);
                             },
                           ),
                         ),
@@ -295,7 +300,7 @@ class _NoteDetailState extends State<NoteDetail> {
                   label: const Text('Save'),
                   icon: const Icon(Icons.save),
                   onPressed: () async {
-                    await _updateNote();
+                    await _updateNote(false);
                     Navigator.pop(context, true);
                   },
                 ),
