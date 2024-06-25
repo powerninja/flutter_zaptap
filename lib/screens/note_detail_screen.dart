@@ -278,14 +278,16 @@ class _NoteDetailState extends State<NoteDetail> {
               children: [
                 FloatingActionButton(
                   heroTag: "heroPhotoButtonDetail",
-                  onPressed: _getImagePath,
+                  onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
                   child: const Icon(Icons.photo),
+                  backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
                 ),
                 const SizedBox(width: 16),
                 FloatingActionButton(
                   heroTag: "heroCameraButtonDetail",
-                  onPressed: _getImagePath,
+                  onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
                   child: const Icon(Icons.camera_alt),
+                  backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
                 ),
                 const SizedBox(width: 16),
                 FloatingActionButton.extended(
