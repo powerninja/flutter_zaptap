@@ -242,32 +242,45 @@ class _MemoScreenState extends State<MemoScreen>
 
   // 画像をフルスクリーンで表示する
   void _showFullScreenImage(BuildContext context, int index) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              Center(
-                child: Image.file(
-                  _selectedImages[index],
-                  fit: BoxFit.contain,
-                ),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black,
+        pageBuilder: (BuildContext context, _, __) {
+          return GestureDetector(
+            onVerticalDragUpdate: (details) {
+              if (details.primaryDelta! > 20 || details.primaryDelta! < -20) {
+                Navigator.of(context).pop();
+              }
+            },
+            child: Dismissible(
+              key: Key(index.toString()),
+              direction: DismissDirection.vertical,
+              onDismissed: (_) => Navigator.of(context).pop(),
+              child: Stack(
+                children: [
+                  Center(
+                    child: Hero(
+                      tag: _selectedImages[index],
+                      child: Image.file(
+                        _selectedImages[index],
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 40,
+                    right: 20,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                top: 40,
-                right: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
