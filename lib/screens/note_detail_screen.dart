@@ -160,7 +160,6 @@ class _NoteDetailState extends State<NoteDetail> {
   }
 
   //TODO: 文字とかぶってしまうため、どうにかする
-  //TODO: 画像を削除する機能を追加する
   //画像のプレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
