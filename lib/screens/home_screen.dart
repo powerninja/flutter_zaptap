@@ -219,21 +219,6 @@ class _MemoScreenState extends State<MemoScreen>
                 ),
               ],
             );
-          } else {
-            return _selectedImages.length < 5
-                ? GestureDetector(
-                    onTap: _getImagePath,
-                    child: Container(
-                      margin: const EdgeInsets.all(5),
-                      width: 100,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Icon(Icons.add),
-                    ),
-                  )
-                : const SizedBox();
           }
         },
       ),
@@ -412,12 +397,11 @@ class _MemoScreenState extends State<MemoScreen>
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: <Widget>[
-                    // タイトル
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                          hintText: 'Untitled', border: InputBorder.none),
-                    ),
+                    // 画像表示
+                    // 画像が1枚も選択されていない場合隙間を無くし、本文を上に詰める
+                    _selectedImages.isEmpty
+                        ? const SizedBox()
+                        : _buildImagePreviews(),
                     // 余白
                     const SizedBox(height: 20.0),
                     // 本文
@@ -487,13 +471,6 @@ class _MemoScreenState extends State<MemoScreen>
                     ),
             ],
           ),
-          if (_isShowingMemoDetail)
-            Positioned(
-              bottom: 100,
-              left: 0,
-              right: 0,
-              child: _buildImagePreviews(),
-            ),
         ],
       ),
       // フローティングアクションボタン
@@ -586,6 +563,21 @@ class _MemoScreenState extends State<MemoScreen>
                   ? null
                   : () async {
                       pickImage();
+                    },
+            ),
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // アルバムボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              heroTag: "heroAlbamButton",
+              child: const Icon(Icons.add_photo_alternate),
+              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
+              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
+              onPressed: _selectedImages.length >= 5
+                  ? null
+                  : () async {
+                      await _getImagePath();
                     },
             ),
         ],
