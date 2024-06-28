@@ -173,7 +173,6 @@ class _MemoScreenState extends State<MemoScreen>
     }
   }
 
-  //TODO: 文字とかぶってしまうため、どうにかする
   // 画像プレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
@@ -257,7 +256,7 @@ class _MemoScreenState extends State<MemoScreen>
                     top: 40,
                     right: 20,
                     child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.white),
+                      icon: const Icon(Icons.close, color: Colors.white),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
@@ -556,7 +555,6 @@ class _MemoScreenState extends State<MemoScreen>
           if (_isShowingMemoDetail)
             FloatingActionButton(
               heroTag: "heroCameraButton",
-              child: const Icon(Icons.camera_alt),
               //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
               backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
               onPressed: _selectedImages.length >= 5
@@ -564,14 +562,14 @@ class _MemoScreenState extends State<MemoScreen>
                   : () async {
                       pickImage();
                     },
+              child: const Icon(Icons.camera_alt),
             ),
           // ボタン間のスペース
           const SizedBox(width: 10.0),
           // アルバムボタン
           if (_isShowingMemoDetail)
             FloatingActionButton(
-              heroTag: "heroAlbamButton",
-              child: const Icon(Icons.add_photo_alternate),
+              heroTag: "heroAlbumButton",
               //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
               backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
               onPressed: _selectedImages.length >= 5
@@ -579,6 +577,7 @@ class _MemoScreenState extends State<MemoScreen>
                   : () async {
                       await _getImagePath();
                     },
+              child: const Icon(Icons.add_photo_alternate),
             ),
         ],
       ),
