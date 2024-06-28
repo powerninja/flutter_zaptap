@@ -176,7 +176,7 @@ class _NoteDetailState extends State<NoteDetail> {
   //画像のプレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
-      height: 200,
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _imagePaths.length,
@@ -189,19 +189,20 @@ class _NoteDetailState extends State<NoteDetail> {
                 },
                 child: Container(
                   margin: const EdgeInsets.all(5),
-                  width: 200,
+                  width: 100,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: ClipRRect(
+                      // 画像を角丸にする
                       borderRadius: BorderRadius.circular(5),
                       child: Stack(children: [
                         Image.file(
                           _imagePaths[index],
                           fit: BoxFit.cover,
-                          width: 200,
-                          height: 200,
+                          width: 100,
+                          height: 100,
                         ),
                         Positioned(
                           top: 0,
