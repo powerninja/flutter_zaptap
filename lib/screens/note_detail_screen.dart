@@ -172,7 +172,6 @@ class _NoteDetailState extends State<NoteDetail> {
     );
   }
 
-  //TODO: 文字とかぶってしまうため、どうにかする
   //画像のプレビューを表示する
   Widget _buildImagePreviews() {
     return SizedBox(
