@@ -274,7 +274,7 @@ class _MemoScreenState extends State<MemoScreen>
     return Scaffold(
       key: _scaffoldKey,
       // フローティングアクションボタンの位置
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       // アプリバー
       appBar: AppBar(
         leading: IconButton(
@@ -477,6 +477,56 @@ class _MemoScreenState extends State<MemoScreen>
         // 中心に配置
         mainAxisSize: MainAxisSize.min,
         children: [
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // クリアボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              heroTag: "heroClearButton",
+              child: const Icon(Icons.delete),
+              onPressed: () {
+                bodyTextController.clear();
+                titleController.clear();
+                setState(() {
+                  isFavorite = 0;
+                  isButtonEnabled = false;
+                  _selectedImages = [];
+                });
+              },
+            ),
+
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // アルバムボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              heroTag: "heroAlbumButton",
+              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
+              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
+              onPressed: _selectedImages.length >= 5
+                  ? null
+                  : () async {
+                      await _getImagePath();
+                    },
+              child: const Icon(Icons.add_photo_alternate),
+            ),
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
+          // カメラボタン
+          if (_isShowingMemoDetail)
+            FloatingActionButton(
+              heroTag: "heroCameraButton",
+              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
+              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
+              onPressed: _selectedImages.length >= 5
+                  ? null
+                  : () async {
+                      pickImage();
+                    },
+              child: const Icon(Icons.camera_alt),
+            ),
+          // ボタン間のスペース
+          const SizedBox(width: 10.0),
           // 保存ボタン
           if (_isShowingMemoDetail)
             FloatingActionButton.extended(
@@ -515,69 +565,6 @@ class _MemoScreenState extends State<MemoScreen>
                       });
                     }
                   : null,
-            ),
-
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // お気に入りボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              heroTag: "heroFavoriteButton",
-              child: isFavorite == 1
-                  ? const Icon(Icons.push_pin)
-                  : const Icon(Icons.push_pin_outlined),
-              onPressed: () {
-                setState(() {
-                  isFavorite = isFavorite == 1 ? 0 : 1;
-                });
-              },
-            ),
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // クリアボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              heroTag: "heroClearButton",
-              child: const Icon(Icons.delete),
-              onPressed: () {
-                bodyTextController.clear();
-                titleController.clear();
-                setState(() {
-                  isFavorite = 0;
-                  isButtonEnabled = false;
-                  _selectedImages = [];
-                });
-              },
-            ),
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // カメラボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              heroTag: "heroCameraButton",
-              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
-              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
-              onPressed: _selectedImages.length >= 5
-                  ? null
-                  : () async {
-                      pickImage();
-                    },
-              child: const Icon(Icons.camera_alt),
-            ),
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // アルバムボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              heroTag: "heroAlbumButton",
-              //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
-              backgroundColor: _selectedImages.length >= 5 ? Colors.grey : null,
-              onPressed: _selectedImages.length >= 5
-                  ? null
-                  : () async {
-                      await _getImagePath();
-                    },
-              child: const Icon(Icons.add_photo_alternate),
             ),
         ],
       ),
