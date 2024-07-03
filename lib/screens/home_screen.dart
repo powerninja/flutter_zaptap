@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 import '../widgets/lightning_icon.dart';
 import '../widgets/note_list_item.dart';
@@ -269,6 +270,40 @@ class _MemoScreenState extends State<MemoScreen>
     );
   }
 
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Theme.of(context).primaryColor,
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: focusNode,
+          toolbarAlignment: MainAxisAlignment.spaceBetween,
+          displayArrows: false,
+          toolbarButtons: [
+            (node) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => node.unfocus(),
+                      child: const Text(
+                        "完了",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -395,7 +430,7 @@ class _MemoScreenState extends State<MemoScreen>
               Container(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
-                  children: <Widget>[
+                  children: [
                     // 画像表示
                     // 画像が1枚も選択されていない場合隙間を無くし、本文を上に詰める
                     _selectedImages.isEmpty
@@ -416,17 +451,11 @@ class _MemoScreenState extends State<MemoScreen>
                             hintText: 'Just start Flick typing...',
                             border: InputBorder.none),
                         maxLines: null,
+                        expands: true,
                         onChanged: (value) {
-                          // メモが空でない場合、保存ボタンを有効にする
-                          if (value.isNotEmpty) {
-                            setState(() {
-                              isButtonEnabled = true;
-                            });
-                          } else {
-                            setState(() {
-                              isButtonEnabled = false;
-                            });
-                          }
+                          setState(() {
+                            isButtonEnabled = value.isNotEmpty;
+                          });
                         },
                       ),
                     ),
