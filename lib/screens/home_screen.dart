@@ -477,26 +477,6 @@ class _MemoScreenState extends State<MemoScreen>
         // 中心に配置
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
-          // クリアボタン
-          if (_isShowingMemoDetail)
-            FloatingActionButton(
-              heroTag: "heroClearButton",
-              child: const Icon(Icons.delete),
-              onPressed: () {
-                bodyTextController.clear();
-                titleController.clear();
-                setState(() {
-                  isFavorite = 0;
-                  isButtonEnabled = false;
-                  _selectedImages = [];
-                });
-              },
-            ),
-
-          // ボタン間のスペース
-          const SizedBox(width: 10.0),
           // アルバムボタン
           if (_isShowingMemoDetail)
             FloatingActionButton(
