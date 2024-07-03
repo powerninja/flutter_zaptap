@@ -229,98 +229,103 @@ class _NoteDetailState extends State<NoteDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('メモ'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: <Widget>[
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  hintText: 'Untitled',
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _title = value;
-                  });
-                },
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _contentController,
-                  decoration: const InputDecoration(
-                    hintText: 'Just start Flick typing...',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                  maxLines: null,
-                  onChanged: (value) {
-                    setState(() {
-                      _content = value;
-                    });
-                  },
-                ),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('メモ'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {},
               ),
             ],
           ),
-          _imagePaths.isNotEmpty
-              ? Positioned(
-                  bottom: 80,
-                  left: 10,
-                  right: 10,
-                  child: _buildImagePreviews(),
-                )
-              : Container(),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton(
-                  heroTag: "heroPhotoButtonDetail",
-                  onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
-                  child: const Icon(Icons.photo),
-                  backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
-                ),
-                const SizedBox(width: 16),
-                FloatingActionButton(
-                  heroTag: "heroCameraButtonDetail",
-                  onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
-                  child: const Icon(Icons.camera_alt),
-                  backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
-                ),
-                const SizedBox(width: 16),
-                FloatingActionButton.extended(
-                  heroTag: "heroSaveButtonDetail",
-                  label: const Text('Save'),
-                  icon: const Icon(Icons.save),
-                  onPressed: () async {
-                    await _updateNote(false);
-                    Navigator.pop(context, true);
-                  },
-                ),
-              ],
-            ),
+          body: Stack(
+            children: [
+              Column(
+                children: <Widget>[
+                  TextField(
+                    controller: _titleController,
+                    decoration: const InputDecoration(
+                      hintText: 'Untitled',
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _title = value;
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _contentController,
+                      decoration: const InputDecoration(
+                        hintText: 'Just start Flick typing...',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(16),
+                      ),
+                      maxLines: null,
+                      onChanged: (value) {
+                        setState(() {
+                          _content = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              _imagePaths.isNotEmpty
+                  ? Positioned(
+                      bottom: 80,
+                      left: 10,
+                      right: 10,
+                      child: _buildImagePreviews(),
+                    )
+                  : Container(),
+            ],
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          bottom: 16 + MediaQuery.of(context).viewInsets.bottom + 60,
+          right: 16,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                heroTag: "heroPhotoButtonDetail",
+                onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
+                child: const Icon(Icons.photo),
+                backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
+              ),
+              const SizedBox(height: 10),
+              FloatingActionButton(
+                heroTag: "heroCameraButtonDetail",
+                onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
+                child: const Icon(Icons.camera_alt),
+                backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
+              ),
+              const SizedBox(height: 10),
+              FloatingActionButton.extended(
+                heroTag: "heroSaveButtonDetail",
+                label: const Text('Save'),
+                icon: const Icon(Icons.save),
+                onPressed: () async {
+                  await _updateNote(false);
+                  Navigator.pop(context, true);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
