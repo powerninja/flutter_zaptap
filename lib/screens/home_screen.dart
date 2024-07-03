@@ -12,7 +12,6 @@ import '../services/database_service.dart';
 import '../services/image_service.dart';
 
 // フローティングアクションボタンの位置を調整するためのクラス
-//TODO: ファイルを分割する
 class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
   final double offsetY;
 
