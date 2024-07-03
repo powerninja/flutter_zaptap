@@ -669,7 +669,7 @@ class _MemoScreenState extends State<MemoScreen>
                     child: const Icon(Icons.add_photo_alternate),
                   ),
                   // ボタン間のスペース
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   // カメラボタン
                   FloatingActionButton(
                     heroTag: "heroCameraButton",
@@ -679,7 +679,7 @@ class _MemoScreenState extends State<MemoScreen>
                     child: const Icon(Icons.camera_alt),
                   ),
                   // ボタン間のスペース
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   // 保存ボタン
                   FloatingActionButton.extended(
                     heroTag: "heroSaveButton",
