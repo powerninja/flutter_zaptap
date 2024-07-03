@@ -270,40 +270,6 @@ class _MemoScreenState extends State<MemoScreen>
     );
   }
 
-  KeyboardActionsConfig _buildConfig(BuildContext context) {
-    return KeyboardActionsConfig(
-      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      keyboardBarColor: Theme.of(context).primaryColor,
-      nextFocus: false,
-      actions: [
-        KeyboardActionsItem(
-          focusNode: focusNode,
-          toolbarAlignment: MainAxisAlignment.spaceBetween,
-          displayArrows: false,
-          toolbarButtons: [
-            (node) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () => node.unfocus(),
-                      child: const Text(
-                        "完了",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-          ],
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
