@@ -21,6 +21,7 @@ dependencies:
   path_provider: ^2.0.11
   flutter_localizations:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -50,3 +51,8 @@ flutter:
           weight: 800
         - asset: assets/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Black.ttf
           weight: 900
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/ZapTapIcon_1024x1024.png"
