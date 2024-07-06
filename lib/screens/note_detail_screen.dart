@@ -63,7 +63,7 @@ class _NoteDetailState extends State<NoteDetail> {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
     setState(() {
-      if (_imagePaths.length + pickedFiles.length <= 5) {
+      if (_imagePaths.length + pickedFiles.length <= 2) {
         _imagePaths.addAll(pickedFiles.map((file) => File(file.path)).toList());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -301,16 +301,16 @@ class _NoteDetailState extends State<NoteDetail> {
             children: [
               FloatingActionButton(
                 heroTag: "heroPhotoButtonDetail",
-                onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
+                onPressed: _imagePaths.length >= 2 ? null : _getImagePath,
                 child: const Icon(Icons.photo),
-                backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
+                backgroundColor: _imagePaths.length >= 2 ? Colors.grey : null,
               ),
               const SizedBox(height: 10),
               FloatingActionButton(
                 heroTag: "heroCameraButtonDetail",
-                onPressed: _imagePaths.length >= 5 ? null : _getImagePath,
+                onPressed: _imagePaths.length >= 2 ? null : _getImagePath,
                 child: const Icon(Icons.camera_alt),
-                backgroundColor: _imagePaths.length >= 5 ? Colors.grey : null,
+                backgroundColor: _imagePaths.length >= 2 ? Colors.grey : null,
               ),
               const SizedBox(height: 10),
               FloatingActionButton.extended(

@@ -234,7 +234,7 @@ class _MemoScreenState extends State<MemoScreen>
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
     setState(() {
-      if (_selectedImages.length + pickedFiles.length <= 5) {
+      if (_selectedImages.length + pickedFiles.length <= 2) {
         _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
         isButtonEnabled = true;
       } else {
@@ -663,9 +663,9 @@ class _MemoScreenState extends State<MemoScreen>
                     heroTag: "heroAlbumButton",
                     //5枚以上の画像が選択されていない場合のみ、ボタンを有効にする
                     backgroundColor:
-                        _selectedImages.length >= 5 ? Colors.grey : null,
+                        _selectedImages.length >= 2 ? Colors.grey : null,
                     onPressed:
-                        _selectedImages.length >= 5 ? null : _getImagePath,
+                        _selectedImages.length >= 2 ? null : _getImagePath,
                     child: const Icon(Icons.add_photo_alternate),
                   ),
                   // ボタン間のスペース
@@ -674,8 +674,8 @@ class _MemoScreenState extends State<MemoScreen>
                   FloatingActionButton(
                     heroTag: "heroCameraButton",
                     backgroundColor:
-                        _selectedImages.length >= 5 ? Colors.grey : null,
-                    onPressed: _selectedImages.length >= 5 ? null : pickImage,
+                        _selectedImages.length >= 2 ? Colors.grey : null,
+                    onPressed: _selectedImages.length >= 2 ? null : pickImage,
                     child: const Icon(Icons.camera_alt),
                   ),
                   // ボタン間のスペース
