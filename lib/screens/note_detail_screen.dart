@@ -259,13 +259,15 @@ class _NoteDetailState extends State<NoteDetail> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: const Text('メモ'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {},
+            title: const Text(
+              'メモ',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w800,
+                decoration: TextDecoration.none,
+                decorationThickness: 3,
               ),
-            ],
+            ),
           ),
           body: Stack(
             children: [
