@@ -73,6 +73,18 @@ class _NoteDetailState extends State<NoteDetail> {
     });
   }
 
+  // カメラを起動して写真を撮影する
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    //カメラを起動して写真を撮影
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _imagePaths.add(File(pickedFile.path));
+      });
+    }
+  }
+
   // ノートをアップデートする
   Future _updateNote(bool isDelete) async {
     // ImageServiceクラスをインスタンス化
@@ -308,7 +320,7 @@ class _NoteDetailState extends State<NoteDetail> {
               const SizedBox(height: 10),
               FloatingActionButton(
                 heroTag: "heroCameraButtonDetail",
-                onPressed: _imagePaths.length >= 2 ? null : _getImagePath,
+                onPressed: _imagePaths.length >= 2 ? null : pickImage,
                 child: const Icon(Icons.camera_alt),
                 backgroundColor: _imagePaths.length >= 2 ? Colors.grey : null,
               ),
