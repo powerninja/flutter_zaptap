@@ -64,8 +64,6 @@ class _MemoScreenState extends State<MemoScreen>
   List<File> _selectedImages = [];
   // 画像のパス
   String? _filePath;
-  // ハンバーガーメニューを開くためのキー
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   // オーバーレイエントリ
   OverlayEntry? _overlayEntry;
 
@@ -393,20 +391,12 @@ class _MemoScreenState extends State<MemoScreen>
       child: Stack(
         children: [
           Scaffold(
-            key: _scaffoldKey,
             // フローティングアクションボタンの位置
             floatingActionButtonLocation:
                 // CustomFloatingActionButtonLocationクラスを使用して、フローティングアクションボタンの位置を調整
                 CustomFloatingActionButtonLocation(60),
             // アプリバー
             appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  // ここにハンバーガーメニューを開く処理を追加
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-              ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -462,38 +452,7 @@ class _MemoScreenState extends State<MemoScreen>
                   ),
                 ],
               ),
-              actions: const [
-                SizedBox(width: 56.0), // ハンバーガーメニューと同じ幅のスペース
-              ],
               centerTitle: true,
-            ),
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    child: const Text(
-                      'メニュー',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('設定'),
-                    onTap: () {
-                      // 設定画面に遷移する処理
-                      Navigator.pop(context);
-                    },
-                  ),
-                  // 他のメニュー項目を追加...
-                ],
-              ),
             ),
             // ページビュー
             body: Stack(
