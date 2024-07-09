@@ -281,25 +281,35 @@ class _MemoScreenState extends State<MemoScreen>
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Image.file(
-                      _selectedImages[index],
-                      fit: BoxFit.cover,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Stack(
+                        children: [
+                          Image.file(
+                            _selectedImages[index],
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 100,
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon:
+                                  const Icon(Icons.close, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedImages.removeAt(index);
+                                  if (_selectedImages.isEmpty) {
+                                    isButtonEnabled = false;
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        _selectedImages.removeAt(index);
-                        if (_selectedImages.isEmpty) {
-                          isButtonEnabled = false;
-                        }
-                      });
-                    },
                   ),
                 ),
               ],
