@@ -233,17 +233,30 @@ class _MemoScreenState extends State<MemoScreen>
   Future<void> _getImagePath() async {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
-    setState(() {
-      if (_selectedImages.length + pickedFiles.length <= 2) {
+    if (_selectedImages.length + pickedFiles.length <= 2) {
+      setState(() {
         _selectedImages.addAll(pickedFiles.map((file) => File(file.path)));
         isButtonEnabled = true;
-      } else {
-        // 選択できる画像の枚数が5枚を超える場合は、エラーメッセージを表示するなどの処理を行う
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('選択できる画像は最大5枚までです。')),
-        );
-      }
-    });
+      });
+    } else {
+      bool? shouldContinue = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('画像選択'),
+            content: const Text('保存できる画像の枚数は2枚までとなります。'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   // カメラを起動して写真を撮影する
