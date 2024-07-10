@@ -4,6 +4,7 @@ import '../services/database_service.dart';
 import '../models/note.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/image_service.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class NoteDetail extends StatefulWidget {
   final Note note;
@@ -154,6 +155,7 @@ class _NoteDetailState extends State<NoteDetail> {
   }
 
   // 画像をタップしたときにフルスクリーンで表示する
+
   void _showFullScreenImage(BuildContext context, int index) {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -173,11 +175,15 @@ class _NoteDetailState extends State<NoteDetail> {
               child: Stack(
                 children: [
                   Center(
-                    child: Hero(
-                      tag: _imagePaths[index],
-                      child: Image.file(
-                        _imagePaths[index],
-                        fit: BoxFit.contain,
+                    child: GestureDetector(
+                      onLongPress: () =>
+                          _showSaveMenu(context, _imagePaths[index]),
+                      child: Hero(
+                        tag: _imagePaths[index],
+                        child: Image.file(
+                          _imagePaths[index],
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
@@ -195,6 +201,92 @@ class _NoteDetailState extends State<NoteDetail> {
           );
         },
       ),
+    );
+  }
+
+// 画像を長押ししたときにメニューを表示する
+  void _showSaveMenu(BuildContext context, File imageFile) async {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final result = await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy + size.height,
+        position.dx + size.width,
+        position.dy + size.height,
+      ),
+      items: [
+        const PopupMenuItem(
+          value: 'save',
+          child: ListTile(
+            leading: Icon(Icons.save),
+            title: Text('画像を保存'),
+          ),
+        ),
+      ],
+    );
+
+    if (result == 'save') {
+      await _saveImage(context, imageFile);
+    }
+  }
+
+  // 画像を保存する
+  Future<void> _saveImage(BuildContext context, File imageFile) async {
+    try {
+      final result = await ImageGallerySaver.saveFile(imageFile.path);
+      if (result['isSuccess']) {
+        _showSuccessDialog(context, '画像を保存しました');
+      } else {
+        _showErrorDialog(context, '画像の保存に失敗しました');
+      }
+    } catch (e) {
+      _showErrorDialog(context, '画像の保存中にエラーが発生しました');
+    }
+  }
+
+  // 成功ダイアログを表示する
+  void _showSuccessDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('成功'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // エラーダイアログを表示する
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('エラー'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
