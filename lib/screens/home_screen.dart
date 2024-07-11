@@ -503,7 +503,9 @@ class _MemoScreenState extends State<MemoScreen>
                               expands: true,
                               onChanged: (value) {
                                 setState(() {
-                                  isButtonEnabled = value.isNotEmpty;
+                                  // 本文または、画像が選択されている場合、保存ボタンを有効にする
+                                  isButtonEnabled = value.isNotEmpty ||
+                                      _selectedImages.isNotEmpty;
                                 });
                               },
                             ),
