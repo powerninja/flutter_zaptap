@@ -66,6 +66,8 @@ class _MemoScreenState extends State<MemoScreen>
   String? _filePath;
   // オーバーレイエントリ
   OverlayEntry? _overlayEntry;
+  // doneボタンの高さ
+  final double _doneButtonHeight = 50.0;
 
   // 初期化
   @override
@@ -140,6 +142,7 @@ class _MemoScreenState extends State<MemoScreen>
             left: 0.0,
             // オーバーレイの中身
             child: Container(
+              height: _doneButtonHeight,
               color: isDarkMode ? Colors.black : Colors.grey[200],
               child: Padding(
                 padding:
@@ -489,25 +492,29 @@ class _MemoScreenState extends State<MemoScreen>
                           const SizedBox(height: 20.0),
                           // 本文
                           Expanded(
-                            child: TextField(
-                              controller: bodyTextController,
-                              autofocus: true,
-                              keyboardType: TextInputType.multiline,
-                              textAlign: TextAlign.left,
-                              // 画面アクセス時にキーボードを表示する
-                              focusNode: focusNode,
-                              decoration: const InputDecoration(
-                                  hintText: 'Just start Flick typing...',
-                                  border: InputBorder.none),
-                              maxLines: null,
-                              expands: true,
-                              onChanged: (value) {
-                                setState(() {
-                                  // 本文または、画像が選択されている場合、保存ボタンを有効にする
-                                  isButtonEnabled = value.isNotEmpty ||
-                                      _selectedImages.isNotEmpty;
-                                });
-                              },
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(bottom: _doneButtonHeight),
+                              child: TextField(
+                                controller: bodyTextController,
+                                autofocus: true,
+                                keyboardType: TextInputType.multiline,
+                                textAlign: TextAlign.left,
+                                // 画面アクセス時にキーボードを表示する
+                                focusNode: focusNode,
+                                decoration: const InputDecoration(
+                                    hintText: 'Just start Flick typing...',
+                                    border: InputBorder.none),
+                                maxLines: null,
+                                expands: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    // 本文または、画像が選択されている場合、保存ボタンを有効にする
+                                    isButtonEnabled = value.isNotEmpty ||
+                                        _selectedImages.isNotEmpty;
+                                  });
+                                },
+                              ),
                             ),
                           ),
                         ],
