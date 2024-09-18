@@ -254,11 +254,11 @@ class _NoteDetailState extends State<NoteDetail> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('成功'),
+          title: const Text('成功'),
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -275,11 +275,11 @@ class _NoteDetailState extends State<NoteDetail> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('エラー'),
+          title: const Text('エラー'),
           content: Text(message),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
